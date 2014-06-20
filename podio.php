@@ -1,6 +1,6 @@
 <?php
 /*
-lPlugin Name: Gravity Forms Podio Add-On
+Plugin Name: Gravity Forms Podio Add-On
 Plugin URI: https://github.com/domabo/gravity-podio-feed
 Description: Integrates Gravity Forms with Podio allowing form submissions to be automatically sent to your Podio account
 Version: 2.4.1
