@@ -611,11 +611,8 @@ class GFPodio {
         }
         else
         {
-            $merge_vars = self::get_PodioAppMergeVars($config);
-           }
-
-         //     $config["meta"]["podio_appname"] = $merge_vars;
-                 
+            $merge_vars = self::get_PodioAppMergeVars($appid, $apptoken);
+        }
 
         //updating meta information
         if(rgpost("gf_podio_submit")){
@@ -776,26 +773,7 @@ class GFPodio {
                         </table>
                     </div>
 
-                    <div id="podio_groupings">
-                        <?php
-                        if(!empty($config["form_id"])){
-
-                            if(!rgempty("podio_appid", $config["meta"]))
-                                $appid = $config["meta"]["podio_appid"];
-                            else
-                                $appid="";
-                            $group_condition = array();
-                            //getting list of selection fields to be used by the optin
-                            $form_meta = RGFormsModel::get_form_meta($config["form_id"]);
-                            $selection_fields = GFCommon::get_selection_fields($form_meta, $config["meta"]["optin_field_id"]);
-                            $group_names = "";
-                            echo self::get_groupings($config,$appid,$selection_fields,$group_condition,$group_names);
-                        }
-                        ?>
-                    </div>
-
-
-
+             
                     <script type="text/javascript">
                         <?php
                         if(!empty($config["form_id"])){
@@ -1032,13 +1010,11 @@ class GFPodio {
 
     }
 
-    public static function get_PodioAppMergeVars($config)
+    public static function get_PodioAppMergeVars($appid, $apptoken)
     {
 
         $merge_vars = array();
         try {
-                    $appid=absint($config["meta"]["podio_appid"]);
-                    $apptoken=$config["meta"]["podio_apptoken"];
                     if (!Podio::is_authenticated())
                     {
                         Podio::authenticate('app', array(
@@ -1048,7 +1024,7 @@ class GFPodio {
                     }
 
                     $podioApp=PodioApp::get( $appid, $attributes = array() );
-                    $config["meta"]["podio_appname"] = $podioApp->config["name"];
+                 //   $config["meta"]["podio_appname"] = $podioApp->config["name"];
                     
                     foreach ($podioApp->fields as $field) {
                         $mergefield=array();
@@ -1061,7 +1037,7 @@ class GFPodio {
                      }
                }
                 catch (PodioError $e) {
-                  $config["meta"]["podio_appname"]="ERROR";
+                 // $config["meta"]["podio_appname"]="ERROR";
                }
 
                return $merge_vars;
@@ -1071,154 +1047,6 @@ class GFPodio {
         global $wp_roles;
         $wp_roles->add_cap("administrator", "gravityforms_podio");
         $wp_roles->add_cap("administrator", "gravityforms_podio_uninstall");
-    }
-
-    public static function get_groupings($config,$selected_appid,$selection_fields,&$group_condition,&$group_names){
-        $api = self::get_api();
-        self::log_debug("Retrieving groups");
-        $groupings = array();// test $api->listInterestGroupings($selected_appid);
-
-        if(!empty($groupings))
-        {
-			self::log_debug("Number of groups: " . count($groupings));
-            $str = "<div id='podio_groups_container' valign='top' class='margin_vertical_10'>";
-
-            $group_tooltip = "<a title='&lt;h6&gt;Groups&lt;/h6&gt;When one or more groups are enabled, users will be assigned to the groups in addition to being subscribed to the Podio app. When disabled, users will not be assigned to groups.' class='tooltip tooltip_podio_groups' onclick='return false;' href='#'>(?)</a>";
-
-            $str .= "   <label for='podio_groups' class='left_header'>" . __("Groups", "gravityformspodio") . " " . $group_tooltip . "</label>";
-            $str .= "   <div id='podio_groups'>";
-            $str .= "        <table>";
-
-            foreach ($groupings as $grouping){
-                $grouping_label = $grouping['name'];
-                $grouping_name = str_replace("%", "", sanitize_title_with_dashes($grouping_label)); //escaping name
-
-                $str .= "<tr>".
-                        "   <td>".
-                        "       <strong>".
-                                    esc_html($grouping_label).
-                        "       </strong>".
-                        "       <input type='hidden' name='" . esc_attr($grouping_name) . "_grouping_label' value='" . esc_attr($grouping_label) . "' />".
-                        "   </td>".
-                        "</tr>";
-
-                $groups = $grouping['groups'];
-                foreach ($groups as $group)
-                {
-                    $group_label = $group['name'];
-                    $group_name = str_replace("%", "", sanitize_title_with_dashes($group_label));
-                    $group_names[] = array("main" => $grouping_name, "sub" => $group_name);
-                    $group_enabled = rgars($config,"meta/groups/{$grouping_name}/{$group_name}/enabled");
-                    $group_operator = rgars($config,"meta/groups/{$grouping_name}/{$group_name}/operator");
-                    $group_value = rgars($config,"meta/groups/{$grouping_name}/{$group_name}/value");
-                    $group_decision = rgars($config,"meta/groups/{$grouping_name}/{$group_name}/decision");
-
-                    if($group_operator == "isnot")
-                    {
-                        $is_operator_state = "";
-                        $isnot_operator_state = "selected='selected'";
-                    }
-                    else
-                    {
-                        $isnot_operator_state = "";
-                        $is_operator_state = "selected='selected'";
-                    }
-
-
-                    if($group_decision == "if")
-                    {
-                        $always_decision = false;
-                        $always_option_state = "";
-                        $if_option_state = "selected='selected'";
-                        $decision_container_state ="";
-                    }
-                    else
-                    {
-                        $always_decision = true;
-                        $always_option_state = "selected='selected'";
-                        $if_option_state = "";
-                        $decision_container_state = "style='display:none;'";
-                    }
-
-                    // to build fields drop down menu
-                    $group_selectedField = str_replace('"', '\"', rgars($config,"meta/groups/{$grouping_name}/{$group_name}/field_id"));
-                    $group_selectedValue = str_replace('"', '\"', rgars($config,"meta/groups/{$grouping_name}/{$group_name}/value"));
-                    $group_condition[$grouping_name . "_" . $group_name]["groupName"] = $group_name;
-                    $group_condition[$grouping_name . "_" . $group_name]["selectedField"] = $group_selectedField;
-                    $group_condition[$grouping_name . "_" . $group_name]["selectedValue"] = $group_selectedValue;
-                    $group_condition[$grouping_name . "_" . $group_name]["groupingName"] = $grouping_name;
-
-
-                    if($group_enabled)
-                    {
-                        $checkbox_state = "checked";
-                        $group_container_state = "";
-
-                    }
-                    else
-                    {
-                        $checkbox_state = "";
-                        $group_container_state = "style='display:none;'";
-                    }
-
-                    if(empty($selection_fields))
-                    {
-                        $condition_fields_state = "style='display:none;'";
-                        $condition_message_state = "";
-                    }
-                    else
-                    {
-                        $condition_fields_state =  "";
-                        $condition_message_state = "style='display:none;'";
-                    }
-
-                    $str .="<tr>" .
-                        "       <td>".
-                        "           <input type='checkbox' id='podio_group_" . $grouping_name . "_" . $group_name . "_enable' name='podio_group[]' value='" . $grouping_name . "__" .$group_name . "' onclick=\"if(this.checked){jQuery('#podio_group_" . $grouping_name . "_" . $group_name . "_condition_field_container').slideDown();} else{jQuery('#podio_group_" . $grouping_name . "_" . $group_name . "_condition_field_container').slideUp();}\"" . $checkbox_state . "/>".
-                        "           <label for='podio_group_" . $grouping_name . "_" . $group_name . "_enable'>" . $group_label . "</label>".
-                        "       </td>".
-                        "   </tr>".
-                        "   <tr>".
-                        "       <td>".
-                        "           <input type='hidden' name='podio_group_" . esc_attr($group_name) . "_label' value='" . esc_attr($group_label) . "' />".
-                        "           <div id='podio_group_" . $grouping_name . "_" . $group_name . "_condition_field_container' " . $group_container_state . " class='podio_group_condition'>".
-                        "               <div id='podio_group_" . $grouping_name . "_" . $group_name . "_condition_fields' " . $condition_fields_state  . " >".
-                                            __("Assign to group", "gravityformspodio").
-                        "                   <select id='podio_group_" . $grouping_name . "_" . $group_name . "_decision' name='podio_group_" . $grouping_name . "_" . $group_name . "_decision' onchange=\"if(jQuery(this).val() == 'if'){jQuery('#podio_group_" . $grouping_name . "_" . $group_name . "_decision_container').fadeIn();}else{jQuery('#podio_group_" . $grouping_name . "_" . $group_name . "_decision_container').fadeOut();}\">".
-                        "                       <option value='always' " . $always_option_state . ">always</option>".
-                        "                       <option value='if' " . $if_option_state . ">if</option>".
-                        "                   </select>".
-                        "                   <span id='podio_group_" . $grouping_name . "_" . $group_name . "_decision_container' " . $decision_container_state . ">".
-                        "                       <select id='podio_group_" . $grouping_name . "_" . $group_name . "_field_id' name='podio_group_" . $grouping_name . "_" . $group_name . "_field_id' class='optin_select' onchange=\"jQuery('#podio_group_" . $grouping_name . "_" . $group_name . "_container').html(GetFieldValues(jQuery(this).val(), '', 20, 'podio_group_" . $grouping_name . "_" . $group_name . "_value'));\">" . $selection_fields . "</select>".
-                        "                       <select id='podio_group_" . $grouping_name . "_" . $group_name . "_operator' name='podio_group_" . $grouping_name . "_" . $group_name . "_operator' >".
-                        "                            <option value='is' " . self::selected($group_operator,"is") . ">" . __("is", "gravityforms") . "</option>".
-                        "                            <option value='isnot' " . self::selected($group_operator,"isnot") . ">" . __("is not", "gravityforms") . "</option>".
-                        "                            <option value='>' " . self::selected($group_operator,">") . ">" . __("greater than", "gravityforms") . "</option>".
-                        "                            <option value='<' " . self::selected($group_operator,"<") . ">" . __("less than", "gravityforms") . "</option>".
-                        "                            <option value='contains' " . self::selected($group_operator,"contains") . ">" . __("contains", "gravityforms") . "</option>".
-                        "                            <option value='starts_with' " . self::selected($group_operator,"starts_with") . ">" . __("starts with", "gravityforms") . "</option>".
-                        "                            <option value='ends_with' " . self::selected($group_operator,"ends_with") . ">" . __("ends with", "gravityforms") . "</option>".
-                        "                       </select>".
-                        "                       <div id='podio_group_" . $grouping_name . "_" . $group_name . "_container' name='podio_group_" . $grouping_name . "_" . $group_name . "_container' style='display:inline'></div>".
-                        "                   </span>".
-                        "               </div>".
-                        "               <div id='podio_group_" . $grouping_name . "_" . $group_name . "_condition_message' " . $condition_message_state . ">".
-                                            __("To create a condition, your form must have a field supported by conditional logic.", "gravityformspodio").
-                        "               </div>".
-                        "           </div>".
-                        "       </td>".
-                        "   </tr>";
-                }
-            }
-            $str .= "    </table></div></div>";
-
-            return $str;
-
-        }
-        else
-        {
-			self::log_debug("No groups found");
-        }
     }
 
     public static function selected($selected, $current){
@@ -1238,7 +1066,7 @@ class GFPodio {
 
         check_ajax_referer("gf_select_podio_form", "gf_select_podio_form");
         $form_id =  intval(rgpost("form_id"));
-        $appid = rgpost("podio_appid");
+        $appid = absint(rgpost("podio_appid"));     
         $apptoken= rgpost("podio_apptoken");
         $spaceid= rgpost("podio_spaceid");
 
@@ -1248,10 +1076,7 @@ class GFPodio {
         if(!$api)
             die("EndSelectForm();");
 
-        //getting list of all Podio merge variables for the selected app
-        self::log_debug("Retrieving Merge_Vars for app {$appid}");
-        $merge_vars = array(array("name"=>"test","tag"=>"testtag","req"=>true));  // $api->listMergeVars($list_id);
-        self::log_debug("Merge_Vars retrieved: " . print_r($merge_vars,true));
+        $merge_vars = self::get_PodioAppMergeVars($appid, $apptoken);
 
         //getting configuration
         $config = GFPodioData::get_feed($setting_id);
