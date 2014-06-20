@@ -595,7 +595,7 @@ class GFPodio {
             $config["meta"] = array();
 
          if(rgpost("gf_podio_submit")){
-            $appid = $_POST["podio_appid"];
+            $appid = absint($_POST["podio_appid"]);
             $apptoken= $_POST["podio_apptoken"];
             $spaceid= $_POST["podio_spaceid"];
 
