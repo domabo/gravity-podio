@@ -576,10 +576,11 @@ public static function settings_page(){
             <h2><?php _e("Podio Feed", "gravityformspodio") ?></h2>
 
             <?php
-//getting Podio API
+
+            //getting Podio API
             $api = self::get_api();
 
-//ensures valid credentials were entered in the settings page
+            //ensures valid credentials were entered in the settings page
             if(!$api){
                 ?>
                 <div><?php echo sprintf(__("We are unable to login to Podio with the provided credentials. Please make sure they are valid in the %sSettings Page%s", "gravityformspodio"), "<a href='?page=gf_settings&addon=Podio'>", "</a>"); ?></div>
@@ -587,7 +588,7 @@ public static function settings_page(){
                 return;
             }
 
-//getting setting id (0 when creating a new one)
+            //getting setting id (0 when creating a new one)
             $id = !empty($_POST["podio_setting_id"]) ? $_POST["podio_setting_id"] : absint($_GET["id"]);
             $config = empty($id) ? array("meta" => array(), "is_active" => true) : GFPodioData::get_feed($id);
 
@@ -595,13 +596,21 @@ public static function settings_page(){
                 $config["meta"] = array();
 
             if(rgpost("gf_podio_submit")){
-            } else
-            {
-                $appid=absint($config["meta"]["podio_appid"]);
-                $apptoken= $config["meta"]["podio_apptoken"];
-                $spaceid=$config["meta"]["podio_spaceid"];
+                $appid = absint($_POST["podio_appid"]);
+                $apptoken= $_POST["podio_apptoken"];
+                $spaceid= $_POST["podio_spaceid"];
 
-//getting merge vars from selected app (if one was entered)
+                $config["meta"]["podio_appid"] = $appid;
+                $config["meta"]["podio_apptoken"] = $apptoken;
+                $config["meta"]["podio_spaceid"] = $spaceid;
+
+                $config["form_id"] = absint($_POST["gf_podio_form"]);
+
+
+                 $is_valid = true;
+
+    
+                 //getting merge vars from selected app (if one was entered or submitted)
                 if (rgempty("podio_appid", $config["meta"]))
                 {
                     $merge_vars = array();
@@ -611,16 +620,7 @@ public static function settings_page(){
                     $merge_vars = self::get_PodioAppMergeVars($appid, $apptoken);
                 }
 
-
-            }
-
-//updating meta information
-            if(rgpost("gf_podio_submit")){
-                $config["form_id"] = absint($_POST["gf_podio_form"]);
-
-                $is_valid = true;
-
-                $field_map = array();
+               $field_map = array();
                 foreach($merge_vars as $var){
                     $field_name = "podio_map_field_" . $var["tag"];
                     $mapped_field = stripslashes($_POST[$field_name]);
@@ -671,7 +671,25 @@ public static function settings_page(){
                     <div class="error" style="padding:6px"><?php echo __("Feed could not be updated. Please enter all required information below.", "gravityformspodio") ?></div>
                     <?php
                 }
+            } else
+            {
+                $appid=absint($config["meta"]["podio_appid"]);
+                $apptoken= $config["meta"]["podio_apptoken"];
+                $spaceid=$config["meta"]["podio_spaceid"];
+
+                        //getting merge vars from selected app (if one was entered or submitted)
+                if (rgempty("podio_appid", $config["meta"]))
+                {
+                    $merge_vars = array();
+                }
+                else
+                {
+                    $merge_vars = self::get_PodioAppMergeVars($appid, $apptoken);
+                }
+
             }
+
+        
 
             ?>
             <form method="post" action="">
