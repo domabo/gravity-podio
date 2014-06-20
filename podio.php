@@ -614,7 +614,15 @@ class GFPodio {
             $config["meta"]["podio_appid"] = $appid;
             $config["meta"]["podio_apptoken"] = $apptoken;
             $config["meta"]["podio_spaceid"] = $spaceid;
-        }
+        } else
+        {
+ $appid=absint($config["meta"]["podio_appid"]);
+  $apptoken= $config["meta"]["podio_apptoken"];
+  $spaceid=$config["meta"]["podio_spaceid"];
+         }
+
+
+
    
           //getting merge vars from selected app (if one was entered)
         if (rgempty("podio_appid", $config["meta"]))
