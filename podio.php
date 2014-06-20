@@ -700,30 +700,8 @@ public static function settings_page(){
                 }
 
             }
-
-        
-
-            ?>
+           ?>
             <form method="post" action="">
-                <?php 
-
-                if(empty($config["meta"]["podio_appid"])){
-                    $appid=null;
-                    $apptoken="";
-                    $spaceid="";
-                    $appname="";
-                }
-                else
-                {
-
-                    $appid = absint($_POST["podio_appid"]);
-                    $apptoken= $_POST["podio_apptoken"];
-                    $spaceid= $_POST["podio_spaceid"];
-
-                    $config["meta"]["podio_appid"] = $appid;
-                    $config["meta"]["podio_apptoken"] = $apptoken;
-                    $config["meta"]["podio_spaceid"] = $spaceid;
-                }  ?>
                 <input type="hidden" name="podio_setting_id" value="<?php echo $id ?>"/>
 
                 <div class="margin_vertical_10">
