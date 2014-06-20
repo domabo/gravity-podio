@@ -1080,7 +1080,7 @@ public static function select_podio_form(){
     if(!$api)
         die("EndSelectForm();");
 
-    $merge_vars = self::get_PodioAppMergeVars($appid, $apptoken);
+    $merge_vars = GFPodio::get_PodioAppMergeVars($appid, $apptoken);
 
 //getting configuration
     $config = GFPodioData::get_feed($setting_id);
