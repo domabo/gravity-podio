@@ -902,7 +902,7 @@ else{
 }
 
 
-function EndSelectForm(fieldList, form_meta, grouping, groups){
+function EndSelectForm(fieldList, form_meta){
 //setting global form object
 form = form_meta;
 if(fieldList){
@@ -910,21 +910,8 @@ if(fieldList){
     SetOptin("","");
 
     jQuery("#podio_field_list").html(fieldList);
-    jQuery("#podio_groupings").html(grouping);
-
-    for(var i in groups)
-        SetGroupCondition(groups[i]["main"], groups[i]["sub"],"","");
-
-    jQuery( '.tooltip_podio_groups' ).tooltip({
-        show: 500,
-        hide: 1000,
-        content: function () {
-            return jQuery(this).prop('title');
-        }
-    });
-
+    
     jQuery("#podio_field_group").slideDown();
-
 }
 else{
     jQuery("#podio_field_group").slideUp();
@@ -1110,11 +1097,9 @@ public static function select_podio_form(){
     $group_condition = array();
     $group_names = array();
     $group_names_json = json_encode($group_names);
-    $grouping = self::get_groupings($config,$appid,$selection_fields,$group_condition,$group_names);
-    $grouping_json = json_encode($grouping);
-
+  
 //fields meta
-    die("EndSelectForm(" . $str_json . ", " . $form_json . ", " . $grouping_json . ", " . $group_names_json . " );");
+    die("EndSelectForm(" . $str_json . ", " . $form_json );");
 }
 
 private static function get_field_mapping($config, $form_id, $merge_vars){
