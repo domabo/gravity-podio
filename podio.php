@@ -611,34 +611,7 @@ class GFPodio {
         }
         else
         {
-            try {
-                    $appid=absint($config["meta"]["podio_appid"]);
-                    $apptoken=$config["meta"]["podio_apptoken"];
-                    if (!Podio::is_authenticated())
-                    {
-                        Podio::authenticate('app', array(
-                            'app_id' => $appid,
-                            'app_token' => $apptoken
-                            ));
-                    }
-
-                    $podioApp=PodioApp::get( $appid, $attributes = array() );
-                    $config["meta"]["podio_appname"] = $podioApp->config["name"];
-                    $merge_vars = array();
-                    foreach ($podioApp->fields as $field) {
-                        $mergefield=array();
-                        $mergefield["tag"]=$field->field_id;
-                        $mergefield["externalid"]=$field->external_id;
-                        $mergefield["name"]=$field->config["label"];
-                        $mergefield["req"]=$field->config["required"];
-                        $mergefield["type"]=$field->type;
-                        $merge_vars[]=$mergefield;
-                     }
-               }
-                catch (PodioError $e) {
-                  $config["meta"]["podio_appname"]="ERROR";
-               }
-
+            $merge_vars = self::get_PodioAppMergeVars($config);
            }
 
          //     $config["meta"]["podio_appname"] = $merge_vars;
@@ -1057,6 +1030,41 @@ class GFPodio {
 
         <?php
 
+    }
+
+    public static function get_PodioAppMergeVars($config)
+    {
+
+        $merge_vars = array();
+        try {
+                    $appid=absint($config["meta"]["podio_appid"]);
+                    $apptoken=$config["meta"]["podio_apptoken"];
+                    if (!Podio::is_authenticated())
+                    {
+                        Podio::authenticate('app', array(
+                            'app_id' => $appid,
+                            'app_token' => $apptoken
+                            ));
+                    }
+
+                    $podioApp=PodioApp::get( $appid, $attributes = array() );
+                    $config["meta"]["podio_appname"] = $podioApp->config["name"];
+                    
+                    foreach ($podioApp->fields as $field) {
+                        $mergefield=array();
+                        $mergefield["tag"]=$field->field_id;
+                        $mergefield["externalid"]=$field->external_id;
+                        $mergefield["name"]=$field->config["label"];
+                        $mergefield["req"]=$field->config["required"];
+                        $mergefield["type"]=$field->type;
+                        $merge_vars[]=$mergefield;
+                     }
+               }
+                catch (PodioError $e) {
+                  $config["meta"]["podio_appname"]="ERROR";
+               }
+
+               return $merge_vars;
     }
 
     public static function add_permissions(){
