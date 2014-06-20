@@ -43,6 +43,18 @@ class GFPodio {
 
 //Plugin starting point. Will load appropriate files
     public static function init(){
+
+         @ini_set( 'log_errors', 'Off' );
+
+@ini_set( 'display_errors', 'On' );
+
+@ini_set( 'error_reporting', E_ALL );
+
+define( 'WP_DEBUG', true );
+
+define( 'WP_DEBUG_LOG', false );
+
+define( 'WP_DEBUG_DISPLAY', true );
 //supports logging
         add_filter("gform_logging_supported", array("GFPodio", "set_logging_supported"));
 
