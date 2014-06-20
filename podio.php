@@ -849,7 +849,6 @@ jQuery(document).ready(function(){
         mysack.setVar( "form_id", formId);
         mysack.encVar( "cookie", document.cookie, false );
         mysack.onError = function() {jQuery("#podio_wait").hide(); alert('<?php _e("Ajax error while selecting a form", "gravityformspodio") ?>' )};
-        alert(appid+'.'+apptoken+'.'+spaceid);
         mysack.runAJAX();
 
         return true;
@@ -1028,7 +1027,7 @@ public static function get_PodioAppMergeVars($appid, $apptoken)
         }
 
         $podioApp=PodioApp::get( $appid, $attributes = array() );
-//   $config["meta"]["podio_appname"] = $podioApp->config["name"];
+        //   $config["meta"]["podio_appname"] = $podioApp->config["name"];
 
         foreach ($podioApp->fields as $field) {
             $mergefield=array();
@@ -1080,7 +1079,7 @@ public static function select_podio_form(){
     if(!$api)
         die("EndSelectForm();");
 
-    $merge_vars = GFPodio::get_PodioAppMergeVars($appid, $apptoken);
+    $merge_vars = array(); //self::get_PodioAppMergeVars($appid, $apptoken);
 
 //getting configuration
     $config = GFPodioData::get_feed($setting_id);
