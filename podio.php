@@ -1287,9 +1287,8 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
 //only export if user has opted in
         if(self::is_optin($form, $feed, $entry))
         {
-            self::export_feed_toPodio($entry, $form, $feed, $api);
-//updating meta to indicate this entry has already been exported to Podio. This will be used to prevent duplicate exports.
-            gform_update_meta($entry["id"], "podio_is_exported", true);
+            if (self::export_feed_toPodio($entry, $form, $feed, $api))
+                  gform_update_meta($entry["id"], "podio_is_exported", true);
         }
         else
         {
@@ -1405,9 +1404,11 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     }
     
     $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
+    return true;
 } catch (PodioError $e) 
 {
   echo "There was an error. The API responded with the error type '{$e->body['error']}' and the mesage '{$e->body['error_description']}'.";
+  return false;
 }
 
 }
