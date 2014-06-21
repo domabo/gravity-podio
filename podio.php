@@ -1336,7 +1336,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         {
             $field = RGFormsModel::get_field($form, $field_id);
             $input_type = RGFormsModel::get_input_type($field);
-            $sourceLabel = $field["label"];
+            $label = $field["label"];
 
             if(is_array(rgar($field, "choices")) && $input_type != "list")
             {
