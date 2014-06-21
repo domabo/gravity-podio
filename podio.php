@@ -29,7 +29,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
+ @ini_set( 'log_errors', 'Off' );
 
+@ini_set( 'display_errors', 'On' );
+
+@ini_set( 'error_reporting', E_ALL );
+
+define( 'WP_DEBUG', true );
+
+define( 'WP_DEBUG_LOG', false );
+
+define( 'WP_DEBUG_DISPLAY', true );
  
 class GFPodio {
 
@@ -1312,10 +1322,9 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
      echo "<br>". strtolower($var_tag) . ":" . $field_id ." , ";
      echo strpos($var_tag, 'facebook');
     
-        
        if ( strpos(strtolower($var_tag), "facebook") !== false)
-    {       $contact_facebook = rgar($entry, $field_id);
-            echo $contact_facebook . " " . $var_tag;
+      { $contact_facebook = rgar($entry, $field_id);
+            echo "FOUND FACEBOOK " . $contact_facebook;
       }
 
        switch(strtolower($field_id))
@@ -1371,28 +1380,29 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
     if (!empty($contact_target_tag))
     {
-         if (!empty($contact_facebook))
-        {
-            $filename = self::get_fb_img($contact_facebook);
-           $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
-           print_r( $fid->file_id);
-          }
- 
         $contact_fields = array(
         "name"=>$contact_name,
-        "mail"=>array($contact_email),
-        "avatar"=>$fid->file_id
+        "mail"=>array($contact_email)
         );
+
+
+        if (!empty($contact_facebook))
+        {
+            $filename = self::get_fb_img($contact_facebook);
+            if ($filename)
+            {
+                $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
+                print_r( $fid->file_id);
+                $contact_fields["avatar"] = ($fid->file_id);
+            }
+        }
 
         $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
 
         $merge_vars[$contact_target_tag] = $ep_profile_id;
-
-       
     }
     print_r($merge_vars);
-    echo $appid;
-
+    
     $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
 
     //listSubscribe and listUpdateMember return true/false
