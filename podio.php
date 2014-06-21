@@ -1281,6 +1281,11 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
     }
 }
 
+private static function startsWith($haystack, $needle)
+{
+    return $needle === "" || strpos($haystack, $needle) === 0;
+}
+
 public static function export_feed_toPodio($entry, $form, $feed, $api)
 {
     $appid=absint($feed["meta"]["podio_appid"]);
