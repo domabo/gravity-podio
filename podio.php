@@ -30,18 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
 
- @ini_set( 'log_errors', 'Off' );
-
-@ini_set( 'display_errors', 'On' );
-
-@ini_set( 'error_reporting', E_ALL );
-
-define( 'WP_DEBUG', true );
-
-define( 'WP_DEBUG_LOG', false );
-
-define( 'WP_DEBUG_DISPLAY', true );
-
 
 class GFPodio {
 
@@ -1279,11 +1267,6 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
             self::log_debug("Opt-in condition not met; not subscribing entry " . $entry["id"] . " to list");
         }
     }
-}
-
-private static function startsWith($haystack, $needle)
-{
-    return $needle === "" || strpos($haystack, $needle) === 0;
 }
 
 public static function export_feed_toPodio($entry, $form, $feed, $api)
