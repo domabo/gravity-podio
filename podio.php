@@ -30,8 +30,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
 
- 
- 
+
+
 
 class GFPodio {
 
@@ -46,7 +46,7 @@ class GFPodio {
 //Plugin starting point. Will load appropriate files
     public static function init(){
 
-       
+
 //supports logging
         add_filter("gform_logging_supported", array("GFPodio", "set_logging_supported"));
 
@@ -575,10 +575,10 @@ public static function settings_page(){
 
             <?php
 
-            //getting Podio API
+//getting Podio API
             $api = self::get_api();
 
-            //ensures valid credentials were entered in the settings page
+//ensures valid credentials were entered in the settings page
             if(!$api){
                 ?>
                 <div><?php echo sprintf(__("We are unable to login to Podio with the provided credentials. Please make sure they are valid in the %sSettings Page%s", "gravityformspodio"), "<a href='?page=gf_settings&addon=Podio'>", "</a>"); ?></div>
@@ -586,7 +586,7 @@ public static function settings_page(){
                 return;
             }
 
-            //getting setting id (0 when creating a new one)
+//getting setting id (0 when creating a new one)
             $id = !empty($_POST["podio_setting_id"]) ? $_POST["podio_setting_id"] : absint($_GET["id"]);
             $config = empty($id) ? array("meta" => array(), "is_active" => true) : GFPodioData::get_feed($id);
 
@@ -596,14 +596,14 @@ public static function settings_page(){
             if(rgpost("gf_podio_submit")){
                 $appid = absint($_POST["podio_appid"]);
                 $apptoken= $_POST["podio_apptoken"];
-             
+
                 $config["meta"]["podio_appid"] = $appid;
                 $config["meta"]["podio_apptoken"] = $apptoken;
-             
+
                 $config["form_id"] = absint($_POST["gf_podio_form"]);
 
-                 $is_valid = true;
-             //getting merge vars from selected app (if one was entered or submitted)
+                $is_valid = true;
+//getting merge vars from selected app (if one was entered or submitted)
                 if (rgempty("podio_appid", $config["meta"]))
                 {
                     $merge_vars = array();
@@ -616,7 +616,7 @@ public static function settings_page(){
                 $appname= $config["meta"]["podio_appname"];
                 $spaceid= $config["meta"]["podio_spaceid"];
 
-               $field_map = array();
+                $field_map = array();
                 foreach($merge_vars as $var){
                     $field_name = "podio_map_field_" . $var["tag"];
                     $mapped_field = stripslashes($_POST[$field_name]);
@@ -669,8 +669,8 @@ public static function settings_page(){
                 }
             } else
             {
-              
-                //getting merge vars from selected app (if one was entered or submitted)
+
+//getting merge vars from selected app (if one was entered or submitted)
                 if (rgempty("podio_appid", $config["meta"]))
                 {
                     $merge_vars = array();
@@ -687,11 +687,11 @@ public static function settings_page(){
                     $spaceid=$config["meta"]["podio_spaceid"];
                     $appname= $config["meta"]["podio_appname"];
                 }
-   
+
 
             }
 
-           ?>
+            ?>
             <form method="post" action="">
                 <input type="hidden" name="podio_setting_id" value="<?php echo $id ?>"/>
 
@@ -883,15 +883,15 @@ else{
 
 function EndGetApp(appname, spaceid){
 
-if(appname!=""){
-    jQuery("#gf_appname").html(appname);
-    jQuery("#gf_spaceid").html(spaceid);
-}
-else{
-  jQuery("#gf_appname").html("");
-    jQuery("#gf_spaceid").html("");
-}
-jQuery("#podio_wait").hide();
+    if(appname!=""){
+        jQuery("#gf_appname").html(appname);
+        jQuery("#gf_spaceid").html(spaceid);
+    }
+    else{
+        jQuery("#gf_appname").html("");
+        jQuery("#gf_spaceid").html("");
+    }
+    jQuery("#podio_wait").hide();
 }
 
 function EndSelectForm(fieldList, form_meta){
@@ -902,7 +902,7 @@ if(fieldList){
     SetOptin("","");
 
     jQuery("#podio_field_list").html(fieldList);
-    
+
     jQuery("#podio_field_group").slideDown();
 }
 else{
@@ -1007,9 +1007,9 @@ function IsConditionalLogicField(field){
 public static function get_PodioAppMergeVars(&$config)
 {
 
-   $appid=absint($config["meta"]["podio_appid"]);
-   $apptoken= $config["meta"]["podio_apptoken"];
-  
+    $appid=absint($config["meta"]["podio_appid"]);
+    $apptoken= $config["meta"]["podio_apptoken"];
+
     $merge_vars = array();
     try {
         if (!Podio::is_authenticated())
@@ -1035,8 +1035,8 @@ public static function get_PodioAppMergeVars(&$config)
         }
     }
     catch (PodioError $e) {
-            $config["meta"]["podio_appname"]="Error with App Id/Token";
-            $config["meta"]["podio_spaceid"]="" . $e->body['error_description'];
+        $config["meta"]["podio_appname"]="Error with App Id/Token";
+        $config["meta"]["podio_spaceid"]="" . $e->body['error_description'];
     }
 
     return $merge_vars;
@@ -1073,19 +1073,19 @@ public static function get_podio_app(){
     if(!$api)
         die("EndGetApp();");
 
-   //getting configuration
+//getting configuration
     $config = GFPodioData::get_feed($setting_id);
     $config["meta"]["podio_appid"] = $appid;     
     $config["meta"]["podio_apptoken"] = $apptoken;
-     $config["meta"]["podio_appname"] = "";     
+    $config["meta"]["podio_appname"] = "";     
     $config["meta"]["podio_spaceid"] = "";
-   
-     $merge_vars = self::get_PodioAppMergeVars($config);
+
+    $merge_vars = self::get_PodioAppMergeVars($config);
 
 //getting list of selection fields to be used by the optin
-   $json_appname = GFCommon::json_encode($config["meta"]["podio_appname"] );
-   $json_spaceid = GFCommon::json_encode($config["meta"]["podio_spaceid"] );
-  
+    $json_appname = GFCommon::json_encode($config["meta"]["podio_appname"] );
+    $json_spaceid = GFCommon::json_encode($config["meta"]["podio_spaceid"] );
+
 //fields meta
     die("EndGetApp(" . $json_appname . ", " . $json_spaceid . ");");
 }
@@ -1102,12 +1102,12 @@ public static function select_podio_form(){
     if(!$api)
         die("EndSelectForm();");
 
-   //getting configuration
+//getting configuration
     $config = GFPodioData::get_feed($setting_id);
     $config["meta"]["podio_appid"] = absint(rgpost("podio_appid"));     
     $config["meta"]["podio_apptoken"] = rgpost("podio_apptoken");
-    
-     $merge_vars = self::get_PodioAppMergeVars($config);
+
+    $merge_vars = self::get_PodioAppMergeVars($config);
 
 //getting field map UI
     $str = self::get_field_mapping($config, $form_id, $merge_vars);
@@ -1121,7 +1121,7 @@ public static function select_podio_form(){
     $selection_fields_json = json_encode($selection_fields);
 
     $group_condition = array();
-  
+
 //fields meta
     die("EndSelectForm(" . $str_json . ", " . $form_json . ");");
 }
@@ -1137,8 +1137,8 @@ private static function get_field_mapping($config, $form_id, $merge_vars){
 
     foreach($merge_vars as $var){
         $selected_field = rgar($config["meta"]["field_map"], $var["tag"]);
-        $required = $var["req"] == "Y" ? "<span class='gfield_required'>*</span>" : "";
-        $error_class = $var["req"] == "Y" && empty($selected_field) && !empty($_POST["gf_podio_submit"]) ? " feeds_validation_error" : "";
+        $required = $var["req"] == true ? "<span class='gfield_required'>*</span>" : "";
+        $error_class = $var["req"] == true && empty($selected_field) && !empty($_POST["gf_podio_submit"]) ? " feeds_validation_error" : "";
         $str .= "<tr class='$error_class'><td class='podio_field_cell'>" . $var["name"]  . " $required</td><td class='podio_field_cell'>" . self::get_mapped_field_list($var["tag"], $selected_field, $form_fields) . "</td></tr>";
     }
     $str .= "</table>";
@@ -1167,6 +1167,10 @@ public static function get_form_fields($form_id){
 //If this is a name field, add full name to the list
                 if(RGFormsModel::get_input_type($field) == "name")
                     $fields[] =  array($field["id"], GFCommon::get_label($field) . " (" . __("Full" , "gravityformspodio") . ")");
+
+//If this is an email field, add contact to the list
+                if(RGFormsModel::get_input_type($field) == "email")
+                    $fields[] =  array($field["id"], GFCommon::get_label($field) . " (" . __("Contact" , "gravityformspodio") . ")");
 
                 foreach($field["inputs"] as $input)
                     $fields[] =  array($input["id"], GFCommon::get_label($field, $input["id"]));
@@ -1256,9 +1260,8 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
 //only export if user has opted in
         if(self::is_optin($form, $feed, $entry))
         {
-            self::export_feed($entry, $form, $feed, $api);
+            self::export_feed_toPodio($entry, $form, $feed, $api);
 //updating meta to indicate this entry has already been exported to Podio. This will be used to prevent duplicate exports.
-            self::log_debug("Marking entry " . $entry["id"] . " as subscribed");
             gform_update_meta($entry["id"], "podio_is_exported", true);
         }
         else
@@ -1268,14 +1271,15 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
     }
 }
 
-public static function export_feed($entry, $form, $feed, $api){
-
-    $email_field_id = $feed["meta"]["field_map"]["EMAIL"];
-    $email = rgar($entry, $email_field_id);
+public static function export_feed_toPodio($entry, $form, $feed, $api)
+{
+    $appid=absint($feed["meta"]["podio_appid"]);
+    $apptoken= $feed["meta"]["podio_apptoken"];
+    $spaceid= $feed["meta"]["podio_spaceid"];
 
     $merge_vars = array('');
-    foreach($feed["meta"]["field_map"] as $var_tag => $field_id){
-
+    foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
+    {
         switch(strtolower($field_id))
         {
             case "date_created" :
@@ -1292,57 +1296,64 @@ public static function export_feed($entry, $form, $feed, $api){
             break;
             default :
             $field = RGFormsModel::get_field($form, $field_id);
-if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "address") //handling full address
-$merge_vars[$var_tag] = self::get_address($entry, $field_id);
-else if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "name") //handling full name
-$merge_vars[$var_tag] = self::get_name($entry, $field_id);
-else if ($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "phone" && $field["phoneFormat"] == "standard") {
-//reformat phone to go to podio when standard format (US/CAN), needs to be in the format NPA-NXX-LINE 404-555-1212 when US/CAN
-    $phone = rgar($entry, $field_id);
-    if (preg_match('/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/', $phone, $matches)){
-        $phone = sprintf("%s-%s-%s", $matches[1], $matches[2], $matches[3]);
-    }
-    $merge_vars[$var_tag] = $phone;
-}
-else if($var_tag != "EMAIL") //ignoring email field as it will be handled separatelly
-$merge_vars[$var_tag] = apply_filters("gform_podio_field_value", rgar($entry, $field_id), $form["id"], $field_id, $entry);
-break;
-}
-}
-
-self::log_debug("Checking to see if {$email} is already on the list");
-$member_info = $api->listMemberInfo($feed["meta"]["contact_list_id"], $email);
-
-if( absint($member_info["errors"]) > 0 || rgar($member_info["data"][0], "status") != "subscribed" ){
-
-    $allow_resubscription = apply_filters( 'gform_podio_allow_resubscription', apply_filters("gform_podio_allow_resubscription_{$form['id']}", true, $form, $entry, $feed), $form, $entry, $feed );
-    if(rgar($member_info["data"][0], "status") == "unsubscribed" && !$allow_resubscription) {
-        self::log_debug("User is unsubscribed and resubscription is not allowed.");
-        return true;
+            if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "address") 
+                $merge_vars[$var_tag] = self::get_address($entry, $field_id);
+            else if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "name") 
+            {
+                 $contact_name = self::get_name($entry, $field_id);
+                 $merge_vars[$var_tag] = $contact_name;
+            }
+            else if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "email") 
+            {
+                 $contact_email = rgar($entry, $field_id);
+                 $contact_target_tag = $var_tag;
+             }
+           else if ($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "phone" && $field["phoneFormat"] == "standard") 
+            {
+                $phone = rgar($entry, $field_id);
+                if (preg_match('/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/', $phone, $matches)){
+                    $phone = sprintf("%s-%s-%s", $matches[1], $matches[2], $matches[3]);
+                }
+                $merge_vars[$var_tag] = $phone;
+            } else
+                $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", rgar($entry, $field_id), $form["id"], $field_id, $entry);
+            break;
+        }
     }
 
-//adding member to list, statuses of rgar($member_info["data"][0], "status") != "subscribed", pending, cleaned need to be "re-subscribed" to send out confirmation email
-    self::log_debug("{$email} is either not on the list or on the list but the status is not subscribed - status: ". rgar($member_info["data"][0], "status") . "; adding to list");
-    self::log_debug("Calling - listSubscribe, Parameters - List ID: " . $feed["meta"]["contact_list_id"] . ", Email: {$email}, " . " Merge_Vars: " . print_r($merge_vars, true) . ", Email Type: html, Double Opt In: {$double_optin}, Update Existing: false, Replace Interests: true, Send Welcome: {$send_welcome}");
-    $retval = $api->listSubscribe($feed["meta"]["contact_list_id"], $email, $merge_vars, "html", $double_optin, false, true, $send_welcome );
-}
-else{
-//updating member
-    self::log_debug("{$email} is already on the list; updating info");
 
-  self::log_debug("Calling - listUpdateMember, Parameters - List ID: " . $feed["meta"]["contact_list_id"] . ", Email: {$email}, " . " Merge_Vars: " . print_r($merge_vars,true) . ", Email Type: html, Replace Interests: true");
-    $retval = $api->listUpdateMember($feed["meta"]["contact_list_id"], $email, $merge_vars, "html", true);
-}
+    if (!Podio::is_authenticated())
+    {
+        Podio::authenticate('app', array(
+            'app_id' => $appid,
+            'app_token' => $apptoken
+            ));
+    }
 
-//listSubscribe and listUpdateMember return true/false
-if ($retval)
-{
-    self::log_debug("Transaction successful");
-}
-else
-{
-    self::log_error( "Transaction failed. Error " . $api->errorCode . " - " . $api->errorMessage);
-}
+    if (!empty($contact_target_tag))
+    {
+        $contact_fields = array(
+        "name"=>$contact_name,
+        "mail"=>array($contact_email)
+        );
+
+        $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
+
+        $merge_vars[$contact_target_tag] = $ep_profile_id;
+    }
+
+    $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
+
+    //listSubscribe and listUpdateMember return true/false
+    if ($retval)
+    {
+        self::log_debug("Transaction successful");
+    }
+    else
+    {
+        self::log_error( "Transaction failed. Error " . $api->errorCode . " - " . $api->errorMessage);
+    }
+    
 }
 
 
