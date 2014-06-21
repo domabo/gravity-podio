@@ -1399,11 +1399,31 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         $existingContacts = PodioContact::get_for_app( $appid, $attributes = array(
               "mail" => array($contact_email)
             ) );
+  //  print_r($existingContacts);
 
-        print_r($existingContacts);
+        if (count($existingContacts)>0)
+        {
+            $first =  $existingContacts[0];
+            $profile_id = $first->profile_id;
+            echo "<br>FOUND " . $profile_id;
 
-        $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
+            $contact_fields = array(
+        "name"=>$contact_name . " UPDATED",
+        "mail"=>array($contact_email)
+        );
 
+            PodioContact::update( $profile_id, $contact_fields );
+
+
+
+        } else
+        {
+            $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
+
+        }
+
+    
+       
         $merge_vars[$contact_target_tag] = $ep_profile_id;
     }
     print_r($merge_vars);
