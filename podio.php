@@ -29,17 +29,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
- @ini_set( 'log_errors', 'Off' );
 
-@ini_set( 'display_errors', 'On' );
-
-@ini_set( 'error_reporting', E_ALL );
-
-define( 'WP_DEBUG', true );
-
-define( 'WP_DEBUG_LOG', false );
-
-define( 'WP_DEBUG_DISPLAY', true );
  
 class GFPodio {
 
@@ -1310,9 +1300,12 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
 
 public static function export_feed_toPodio($entry, $form, $feed, $api)
 {
+    try
+    {
+
     $appid=absint($feed["meta"]["podio_appid"]);
-    $apptoken= $feed["meta"]["podio_apptoken"];
-    $spaceid= $feed["meta"]["podio_spaceid"];
+    $apptoken= $feed["meta"]["podio_apptoken"] . "a";
+        $spaceid= $feed["meta"]["podio_spaceid"];
 
     $merge_vars = array();
     foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
@@ -1367,6 +1360,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     }
 
 
+
     if (!Podio::is_authenticated())
     {
         Podio::authenticate('app', array(
@@ -1375,8 +1369,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             ));
     }
 
-
-    if (!empty($contact_target_tag))
+  if (!empty($contact_target_tag))
     {
         $contact_fields = array(
         "name"=>$contact_name,
@@ -1400,37 +1393,27 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
               "name" => $contact_name
             ) );
     
-        if (count($existingContacts)>0)
-        {
-            $first =  $existingContacts[0];
-            $ep_profile_id = $first->profile_id;
-            echo "<br>FOUND " . $profile_id;
+            if (count($existingContacts)>0)
+            {
+                $first =  $existingContacts[0];
+                $ep_profile_id = $first->profile_id;
+                echo "<br>FOUND " . $profile_id;
 
-            PodioContact::update( $ep_profile_id, $contact_fields );
+                PodioContact::update( $ep_profile_id, $contact_fields );
 
         } else
         {
             $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
-
         }
-
-    
-       
+  
         $merge_vars[$contact_target_tag] = $ep_profile_id;
     }
-    print_r($merge_vars);
     
     $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
-
-    //listSubscribe and listUpdateMember return true/false
-    if ($retval)
-    {
-        self::log_debug("Transaction successful");
-    }
-    else
-    {
-        self::log_error( "Transaction failed. Error " . $api->errorCode . " - " . $api->errorMessage);
-    }
+} catch (PodioError $e) 
+{
+  echo "There was an error. The API responded with the error type '{$e->body['error']}' and the mesage '{$e->body['error_description']}'.";
+}
 
 }
 
