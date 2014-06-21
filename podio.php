@@ -834,7 +834,6 @@ jQuery(document).ready(function(){
         mysack.setVar( "podio_appid", appid);
         mysack.setVar( "podio_apptoken", apptoken);
         mysack.encVar( "cookie", document.cookie, false );
-        alert(podio_appid);
         mysack.onError = function() {jQuery("#podio_wait").hide(); alert('<?php _e("Ajax error while setting App Id and Token", "gravityformspodio") ?>' )};
         mysack.runAJAX();
 
@@ -1056,8 +1055,8 @@ public static function get_PodioAppMergeVars(&$config)
         }
     }
     catch (PodioError $e) {
-            $config["meta"]["podio_appname"]="ERRORS" . $appid . "." . $apptoken;
-            $config["meta"]["podio_spaceid"]="ERRORS" . $e;
+            $config["meta"]["podio_appname"]="Error with App Id/Token"
+            $config["meta"]["podio_spaceid"]="" . $e->body['error_description'];
     }
 
     return $merge_vars;
@@ -1098,7 +1097,9 @@ public static function get_podio_app(){
     $config = GFPodioData::get_feed($setting_id);
     $config["meta"]["podio_appid"] = $appid;     
     $config["meta"]["podio_apptoken"] = $apptoken;
-    
+     $config["meta"]["podio_appname"] = "";     
+    $config["meta"]["podio_spaceid"] = "";
+   
      $merge_vars = self::get_PodioAppMergeVars($config);
 
 //getting list of selection fields to be used by the optin
