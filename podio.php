@@ -1303,7 +1303,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     {
 
     $appid=absint($feed["meta"]["podio_appid"]);
-    $apptoken= $feed["meta"]["podio_apptoken"] . "a";
+    $apptoken= $feed["meta"]["podio_apptoken"];
         $spaceid= $feed["meta"]["podio_spaceid"];
 
     $merge_vars = array();
