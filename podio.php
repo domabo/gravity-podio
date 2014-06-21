@@ -1331,9 +1331,13 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                     $valueArray = array();
                     foreach ($field['choices'] as $key => $choice)
                     {
+                         echo "<br>";
+                       
+                        print_r($choice); 
+                        echo "<br>";
                         $id = (string)$field['inputs'][$key]['id'];
                         if (isset($entry[$id]) && $entry[$id] != null):
-                            $value[] = $choice['text'];
+                            $value[] = $choice["text"];
                         endif;
                     }
                     $value = implode(",", $value);
