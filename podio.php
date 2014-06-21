@@ -1474,7 +1474,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 }
             }
 
-            $existingContacts = PodioContact::get_for_app( $appid . "asasdasd", $attributes = array(
+            $existingContacts = PodioContact::get_for_app( $appid , $attributes = array(
                 "mail" => array($contact_email),
                 "name" => $contact_name
                 ) );
@@ -1511,7 +1511,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 "status" => "active",
                 "space_id" => $spaceid), $options = array() );
                
-            print_r($task);
+       
             echo "OK";
 
             return false;
