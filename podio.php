@@ -1481,21 +1481,28 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
             $merge_vars[$contact_target_tag] = $ep_profile_id;
         }
-        echo "<br>";
-print_r($entry);
-  echo "<br>";  
-  echo "<br>";
-    print_r($merge_vars);
-
-    $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
+        $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
         return true;
     } catch (PodioError $e) 
     {
         echo "There was an error. The API responded with the error type " . $e->body['error'] ." and the mesage " . $e->body['error_description'] . ".";
         echo "<script>alert('Unfortunately an error has occured in the submission.  Please see the window for more details');</script>";
-        return false;
+        try  
+        {
+            $title = "Error in Survey Submission";
+            if !empty($contact_name) 
+                $title = $title . " for " . $contactname;
+            PodioTask::create( $attributes = array(
+                "text": $title,
+                "description": $e->body['error'] . " " . $e->body['error_description']
+                , $options = array("silent" => true) );
+            return false
+        }  
+        catch (PodioError $e2) 
+        {
+            return false
+        }
     }
-
 }
 
 
