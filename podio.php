@@ -1290,6 +1290,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     $merge_vars = array('');
     foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
     {
+        echo $field_id." ";
         switch(strtolower($field_id))
         {
             case "date_created" :
