@@ -1319,7 +1319,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
            foreach ($field['choices'] as $key => $choice)
             {
                     $id = (string)$field['inputs'][$key]['id'];
-                    if (isset($value[$id]) && $value[$id] != null):
+                    if (isset($entry[$id]) && $entry[$id] != null):
                        echo $choice['value'];
                     endif;
              }
