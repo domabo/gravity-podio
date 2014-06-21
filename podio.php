@@ -601,12 +601,10 @@ public static function settings_page(){
             if(rgpost("gf_podio_submit")){
                 $appid = absint($_POST["podio_appid"]);
                 $apptoken= $_POST["podio_apptoken"];
-                $spaceid= $_POST["podio_spaceid"];
-
+             
                 $config["meta"]["podio_appid"] = $appid;
                 $config["meta"]["podio_apptoken"] = $apptoken;
-                $config["meta"]["podio_spaceid"] = $spaceid;
-
+             
                 $config["form_id"] = absint($_POST["gf_podio_form"]);
 
 
@@ -623,8 +621,8 @@ public static function settings_page(){
                     $merge_vars = self::get_PodioAppMergeVars($config);
                 }
 
-                $appname= $config["meta"]["podio_appname"];
-
+                $appname= $config["meta"]["podio_spaceid"];
+                $spaceid= $config["meta"]["podio_spaceid"];
 
                $field_map = array();
                 foreach($merge_vars as $var){
@@ -681,10 +679,8 @@ public static function settings_page(){
             {
                 $appid=absint($config["meta"]["podio_appid"]);
                 $apptoken= $config["meta"]["podio_apptoken"];
-                $spaceid=$config["meta"]["podio_spaceid"];
-                $appname= $config["meta"]["podio_appname"];
-
-                        //getting merge vars from selected app (if one was entered or submitted)
+              
+                //getting merge vars from selected app (if one was entered or submitted)
                 if (rgempty("podio_appid", $config["meta"]))
                 {
                     $merge_vars = array();
@@ -693,6 +689,9 @@ public static function settings_page(){
                 {
                     $merge_vars = self::get_PodioAppMergeVars($config);
                 }
+
+                  $spaceid=$config["meta"]["podio_spaceid"];
+                $appname= $config["meta"]["podio_appname"];
 
             }
 
@@ -833,7 +832,7 @@ jQuery(document).ready(function(){
         }
     }
 
-    function SelectForm(appid, apptoken, spaceid, formId){
+    function SelectForm(appid, apptoken, formId){
         if(!formId){
             jQuery("#podio_field_group").slideUp();
             return;
@@ -850,7 +849,6 @@ jQuery(document).ready(function(){
         mysack.setVar( "gf_select_podio_form", "<?php echo wp_create_nonce("gf_select_podio_form") ?>" );
         mysack.setVar( "podio_appid", appid);
         mysack.setVar( "podio_apptoken", apptoken);
-        mysack.setVar( "podio_spaceid", spaceid);
         mysack.setVar( "form_id", formId);
         mysack.encVar( "cookie", document.cookie, false );
         mysack.onError = function() {jQuery("#podio_wait").hide(); alert('<?php _e("Ajax error while selecting a form", "gravityformspodio") ?>' )};
@@ -1010,8 +1008,7 @@ public static function get_PodioAppMergeVars($config)
 
    $appid=absint($config["meta"]["podio_appid"]);
    $apptoken= $config["meta"]["podio_apptoken"];
-   $spaceid=$config["meta"]["podio_spaceid"];
-
+  
     $merge_vars = array();
     try {
         if (!Podio::is_authenticated())
@@ -1069,7 +1066,6 @@ public static function select_podio_form(){
     $form_id =  intval(rgpost("form_id"));
     $appid = absint(rgpost("podio_appid"));     
     $apptoken= rgpost("podio_apptoken");
-    $spaceid= rgpost("podio_spaceid");
 
     $setting_id =  intval(rgpost("setting_id"));
 
@@ -1081,8 +1077,7 @@ public static function select_podio_form(){
     $config = GFPodioData::get_feed($setting_id);
     $config["meta"]["podio_appid"] = absint(rgpost("podio_appid"));     
     $config["meta"]["podio_apptoken"] = rgpost("podio_apptoken");
-    $spaceid= rgpost("podio_spaceid");
-
+    
      $merge_vars = self::get_PodioAppMergeVars($config);
 
 //getting field map UI
