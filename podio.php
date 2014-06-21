@@ -1309,17 +1309,19 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     $merge_vars = array();
     foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
     {
+
         echo "<br>" . $var_tag . ":";
        $field = RGFormsModel::get_field($form, $field_id);
-        echo RGFormsModel::get_input_type($field) . ":";
+       $lead = $entry[field_id];
+       echo RGFormsModel::get_input_type($field) . ":";
+           print_r($lead);
+    
         if (RGFormsModel::get_input_type($field)=="checkbox")
         {
 
              }
 
-         $lead = RGFormsModel::get_lead($entry); 
-        // print_r($lead);
-         print_r(GFFormsModel::get_field_value_long($lead, $field_id, $form)); 
+      print_r(GFFormsModel::get_field_value_long($lead, $field_id, $form)); 
 
        if ( strpos(strtolower($var_tag), "facebook") !== false)
       { $contact_facebook = rgar($entry, $field_id);
