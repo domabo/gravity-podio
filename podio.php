@@ -1428,7 +1428,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         $merge_vars[$contact_target_tag] = $ep_profile_id;
     }
     
-    print_r($merge_vars);
+  //  print_r($merge_vars);
     $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
     return true;
 } catch (PodioError $e) 
