@@ -1313,10 +1313,11 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
         echo "<br>" . $var_tag . ":";
        $field = RGFormsModel::get_field($form, $field_id);
-    
-        if (RGFormsModel::get_input_type($field)=="checkbox")
-        {  
-           foreach ($field['choices'] as $key => $choice)
+       $input_type = RGFormsModel::get_input_type($field);
+       
+
+       if(in_array($input_type, array("checkbox", "radio", "select", "multiselect"))){
+            foreach ($field['choices'] as $key => $choice)
             {
                     $id = (string)$field['inputs'][$key]['id'];
                     if (isset($entry[$id]) && $entry[$id] != null):
