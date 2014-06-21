@@ -1318,8 +1318,8 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
              }
 
          $lead = RGFormsModel::get_lead($entry); 
-         print_r($lead);
-                print_r(GFFormsModel::get_field_value_long($lead, $field_id, $form)); 
+        // print_r($lead);
+         print_r(GFFormsModel::get_field_value_long($lead, $field_id, $form)); 
 
        if ( strpos(strtolower($var_tag), "facebook") !== false)
       { $contact_facebook = rgar($entry, $field_id);
