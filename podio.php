@@ -1321,13 +1321,9 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     {
         
        if ( strpos(strtolower($var_tag), "facebook") != 0)
-        echo "SETTING";
-
     {       $contact_facebook = rgar($entry, $field_id);
             echo $contact_facebook . " " . $var_tag;
-      
-             
-           }
+      }
 
        switch(strtolower($field_id))
         {
