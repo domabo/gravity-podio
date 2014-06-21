@@ -1310,8 +1310,9 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
     {
         echo "<br>" . $var_tag . ":";
+       $field = RGFormsModel::get_field($form, $field_id);
         echo RGFormsModel::get_input_type($field) . ":";
-        print_r($field_id);
+        print_r($field);
 
        if ( strpos(strtolower($var_tag), "facebook") !== false)
       { $contact_facebook = rgar($entry, $field_id);
