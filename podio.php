@@ -1169,39 +1169,44 @@ public static function get_form_fields($form_id){
                     $fields[] =  array($field["id"], GFCommon::get_label($field) . " (" . __("Full" , "gravityformspodio") . ")");
 
 //If this is an email field, add contact to the list
-                if(RGFormsModel::get_input_type($field) == "email")
-                    $fields[] =  array($field["id"], GFCommon::get_label($field) . " (" . __("Contact" , "gravityformspodio") . ")");
-  
-               if(RGFormsModel::get_input_type($field) == "checkbox")
-               {
-                  $fields[] =  array($field["id"], GFCommon::get_label($field));
-               } else
-               {
+                if(RGFormsModel::get_input_type($field) == "checkbox")
+                {
+                    $fields[] =  array($field["id"], GFCommon::get_label($field));
+                } else
+                {
 
-                foreach($field["inputs"] as $input)
-                    $fields[] =  array($input["id"], GFCommon::get_label($field, $input["id"]));
-            }
+                    foreach($field["inputs"] as $input)
+                        $fields[] =  array($input["id"], GFCommon::get_label($field, $input["id"]));
+                }
             }
             else if(!rgar($field,"displayOnly")){
-                $fields[] =  array($field["id"], GFCommon::get_label($field));
+                if(RGFormsModel::get_input_type($field) == "email")
+                {
+                    $fields[] =  array($field["id"], GFCommon::get_label($field) . " (" . __("Contact" , "gravityformspodio") . ")");
+                }
+
+                else
+                {
+                    $fields[] =  array($field["id"], GFCommon::get_label($field));
+                    |
+                }
             }
         }
+        return $fields;
     }
-    return $fields;
-}
 
-private static function get_entry_meta($form){
-    $entry_meta = GFFormsModel::get_entry_meta($form["id"]);
-    $keys = array_keys($entry_meta);
-    foreach ($keys as $key){
-        array_push($form["fields"],array("id" => $key , "label" => $entry_meta[$key]['label']));
+    private static function get_entry_meta($form){
+        $entry_meta = GFFormsModel::get_entry_meta($form["id"]);
+        $keys = array_keys($entry_meta);
+        foreach ($keys as $key){
+            array_push($form["fields"],array("id" => $key , "label" => $entry_meta[$key]['label']));
+        }
+        return $form;
     }
-    return $form;
-}
 
-public static function get_fb_img($fbId){
-    $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
-    $headers = get_headers($url,1);
+    public static function get_fb_img($fbId){
+        $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
+        $headers = get_headers($url,1);
 
 $profileimage = $headers['Location']; //image URL
 
@@ -1351,7 +1356,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             {
                 $value = rgar($entry, $field_id);
             }
-       
+
             if ((empty($contact_facebook)) && ((strpos(strtolower($var_tag), "facebook") !== false) ||  strpos(strtolower($label), "facebook") !=false))
             {
                 $contact_facebook = $value;
