@@ -1214,6 +1214,7 @@ public static function get_fb_img($fbId){
     fclose($fp);
     return $filename;
 }
+}
 
 
 
