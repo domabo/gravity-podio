@@ -1312,7 +1312,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
         echo "<br>" . $var_tag . ":";
        $field = RGFormsModel::get_field($form, $field_id);
-       $lead = $entry[field_id];
+       $lead = $entry[$field_id];
        echo RGFormsModel::get_input_type($field) . ":";
            print_r($lead);
     
