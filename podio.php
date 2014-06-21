@@ -1168,7 +1168,6 @@ public static function get_form_fields($form_id){
                 if(RGFormsModel::get_input_type($field) == "name")
                     $fields[] =  array($field["id"], GFCommon::get_label($field) . " (" . __("Full" , "gravityformspodio") . ")");
 
-//If this is an email field, add contact to the list
                 if(RGFormsModel::get_input_type($field) == "checkbox")
                 {
                     $fields[] =  array($field["id"], GFCommon::get_label($field));
@@ -1184,11 +1183,9 @@ public static function get_form_fields($form_id){
                 {
                     $fields[] =  array($field["id"], GFCommon::get_label($field) . " (" . __("Contact" , "gravityformspodio") . ")");
                 }
-
                 else
                 {
                     $fields[] =  array($field["id"], GFCommon::get_label($field));
-                    |
                 }
             }
         }
@@ -1213,7 +1210,8 @@ $profileimage = $headers['Location']; //image URL
 $ext = pathinfo($profileimage, PATHINFO_EXTENSION);
 $filename = sys_get_temp_dir() . "/" . $fbId . "." . $ext;
 
-if (file_exists($filename)) {
+if (file_exists($filename)) 
+{
     return $filename;
 } else {
 
