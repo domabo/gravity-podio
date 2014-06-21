@@ -1319,7 +1319,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
            $inputs = $field["inputs"];
           foreach($inputs as $input)
 {
-    print_r($input);
+    echo $inputs["id"] " . " rgar($entry, $inputs["id"]);
 }
 
         
