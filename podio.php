@@ -1367,7 +1367,8 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
            
         }
 
-        echo "FACEBOOOK " . $filename . $fid;
+        echo "FACEBOOOK " . $filename;
+        print_r( $fid);
       
         $contact_fields = array(
         "name"=>$contact_name,
