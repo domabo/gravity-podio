@@ -791,16 +791,6 @@ jQuery(document).ready(function(){
     var selectedValue = "<?php echo str_replace('"', '\"', $config["meta"]["optin_value"])?>";
     SetOptin(selectedField, selectedValue);
 
-    <?php
-    if(!empty($group_condition)){
-        foreach ($group_condition as $condition)
-        {
-            $input_name = "podio_group_" . esc_js($condition["groupingName"]) . "_" . esc_js($condition["groupName"]) . "_value";
-            echo 'SetGroupCondition("' . esc_js($condition["groupingName"]) . '","' . esc_js($condition["groupName"]) . '","' . esc_js($condition["selectedField"]) . '","' . esc_js($condition["selectedValue"]) . '","' . $input_name . '");';
-
-        }
-    }?>
-
 });
 <?php
 }
