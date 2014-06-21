@@ -1507,7 +1507,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 $task = PodioTask::create( $attributes = array(
                 "text" => $title,
                 "description" => "TEST",
-                "private" => 0,
+                "private" => false,
                 "responsible" => 2274231,
                 "space_id" => $spaceid,
                 'due_on' => '2014-07-01 16:48:32')
