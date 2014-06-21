@@ -1292,7 +1292,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     {
         
 
-       if (startsWith($strtolower(var_tag), 'facebook'); ) 
+       if (startsWith($strtolower(var_tag), 'facebook'))
             $contact_facebook = rgar($entry, $field_id);
 
        switch(strtolower($field_id))
