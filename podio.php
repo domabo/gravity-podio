@@ -1506,8 +1506,10 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 $title = $title . " for " . $contact_name;
                 $task = PodioTask::create( $attributes = array(
                 "text" => $title,
+                "description" => "TEST",
                 "private" => false,
-                "description" => $e->body['error'] . " " . $e->body['error_description'])
+                "responsible" => 2274231",
+                'due_on' => '2014-07-01 16:48:32')
                 , $options = array("silent" => false) );
             print_r($task);
 
@@ -1517,8 +1519,11 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         {
             return false;
         }
+
     }
 }
+
+
 
 
 public static function uninstall(){
