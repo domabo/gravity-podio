@@ -1336,11 +1336,12 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                         print_r($choice); 
                         echo "<br>";
                         $id = (string)$field['inputs'][$key]['id'];
+                        echo $id;
                         if (isset($entry[$id]) && $entry[$id] != null):
-                            $value[] = $choice["text"];
+                            $valueArray[] = $choice["text"];
                         endif;
                     }
-                    $value = implode(",", $value);
+                    $value = implode(",", $valueArray);
                 } else if ($input_type == "radio") {
                     $value = rgar($entry, $field_id);
                     foreach ($field['choices'] as $choice)
