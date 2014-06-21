@@ -1504,14 +1504,13 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $title = "Error in Survey Submission";
             if (!empty($contact_name))
                 $title = $title . " for " . $contact_name;
-                $task = PodioTask::create( $attributes = array(
-                "text" => $title,
+
+           $task = Podio::Task.create_with_ref( "app", $appid, $attributes = array( "text" => $title,
                 "private" => false,
                 "description" => "TEST",
-                "ref" => $appid,
-                "statis" => "active",
-                "space_id" => $spaceid)
-               );
+                "status" => "active",
+                "space_id" => $spaceid), options = {} );
+               
             print_r($task);
             echo "OK";
 
