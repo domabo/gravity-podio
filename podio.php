@@ -1326,7 +1326,6 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 {
     try
     {
-
         $appid=absint($feed["meta"]["podio_appid"]);
         $apptoken= $feed["meta"]["podio_apptoken"];
         $spaceid= $feed["meta"]["podio_spaceid"];
@@ -1430,6 +1429,24 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 break;
             }
         }
+
+        if (!empty($contact_target_tag) && empty($contact_name))
+        {
+              foreach($form["fields"] as $field)
+              {
+                    $input_type = RGFormsModel::get_input_type($field);
+                    $label = $field["label"];
+                    $field_id = $field["id"];
+
+                if (($field_id == intval($field_id) && $input_type == "name")  || strpos(strtolower($label), "name") !== false)
+                {
+                    $contact_name = self::get_name($entry, $field_id);
+                    break;
+                }
+          }
+
+        }
+
 
         if (!Podio::is_authenticated())
         {
