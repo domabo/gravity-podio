@@ -620,7 +620,7 @@ public static function settings_page(){
                 }
                 else
                 {
-                    $merge_vars = self::get_PodioAppMergeVars($appid, $apptoken);
+                    $merge_vars = self::get_PodioAppMergeVars($config);
                 }
 
                $field_map = array();
@@ -687,7 +687,7 @@ public static function settings_page(){
                 }
                 else
                 {
-                    $merge_vars = self::get_PodioAppMergeVars($appid, $apptoken);
+                    $merge_vars = self::get_PodioAppMergeVars($config);
                 }
 
             }
@@ -1002,8 +1002,12 @@ function IsConditionalLogicField(field){
 
 }
 
-public static function get_PodioAppMergeVars($appid, $apptoken)
+public static function get_PodioAppMergeVars($config)
 {
+
+   $appid=absint($config["meta"]["podio_appid"]);
+   $apptoken= $config["meta"]["podio_apptoken"];
+   $spaceid=$config["meta"]["podio_spaceid"];
 
     $merge_vars = array();
     try {
@@ -1016,7 +1020,8 @@ public static function get_PodioAppMergeVars($appid, $apptoken)
         }
 
         $podioApp=PodioApp::get( $appid, $attributes = array() );
-        //   $config["meta"]["podio_appname"] = $podioApp->config["name"];
+        $config["meta"]["podio_appname"] = $podioApp->config["name"];
+        $config["meta"]["podio_spaceid"] = $podioApp->space_id;
 
         foreach ($podioApp->fields as $field) {
             $mergefield=array();
@@ -1029,7 +1034,8 @@ public static function get_PodioAppMergeVars($appid, $apptoken)
         }
     }
     catch (PodioError $e) {
-// $config["meta"]["podio_appname"]="ERROR";
+            $config["meta"]["podio_appname"]="ERROR";
+            $config["meta"]["podio_spaceid"]="ERROR";
     }
 
     return $merge_vars;
@@ -1058,20 +1064,15 @@ public static function select_podio_form(){
 
     check_ajax_referer("gf_select_podio_form", "gf_select_podio_form");
     $form_id =  intval(rgpost("form_id"));
-    $appid = absint(rgpost("podio_appid"));     
-    $apptoken= rgpost("podio_apptoken");
-    $spaceid= rgpost("podio_spaceid");
-
     $setting_id =  intval(rgpost("setting_id"));
 
     $api = self::get_api();
     if(!$api)
         die("EndSelectForm();");
 
-    $merge_vars = self::get_PodioAppMergeVars($appid, $apptoken);
-
-//getting configuration
+   //getting configuration
     $config = GFPodioData::get_feed($setting_id);
+     $merge_vars = self::get_PodioAppMergeVars($config);
 
 //getting field map UI
     $str = self::get_field_mapping($config, $form_id, $merge_vars);
