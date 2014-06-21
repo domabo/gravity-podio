@@ -1205,6 +1205,7 @@ private static function get_entry_meta($form){
 public static function get_fb_img($fbId){
     $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
     $headers = get_headers($url,1);
+    echo $headers;
     $profileimage = $headers['Location']; //image URL
  
     $ext = pathinfo($profileimage, PATHINFO_EXTENSION);
@@ -1215,7 +1216,7 @@ public static function get_fb_img($fbId){
     } else {
 
     $ch = curl_init($profileimage);
-    $fp = fopen( $filename, ‘wb’);
+    $fp = fopen( $filename, "wb");
     curl_setopt($ch, CURLOPT_FILE, $fp);
     curl_setopt($ch, CURLOPT_HEADER, 0);
     curl_setpt($ch, CURLOPT_USERAGENT,"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.13 (KHTML, wie z. B. Gecko) Chrome/13.0.782.215 Safari/525.13." );
