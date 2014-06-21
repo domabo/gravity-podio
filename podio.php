@@ -1425,7 +1425,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                         $phone = sprintf("%s-%s-%s", $matches[1], $matches[2], $matches[3]);
                     }
                     $merge_vars[$var_tag] = $phone;
-                } else if (!empty($field_id))
+                } else if (!empty($field_id) && !empty($value))
                     $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", $value, $form["id"], $field_id, $entry);
                 break;
             }
@@ -1481,8 +1481,8 @@ print_r($entry);
   echo "<br>";  
   echo "<br>";
     print_r($merge_vars);
-    
-        $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
+
+    $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
         return true;
     } catch (PodioError $e) 
     {
