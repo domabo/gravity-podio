@@ -1309,10 +1309,10 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     $merge_vars = array();
     foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
      echo "<br>". strtolower($var_tag) . ":" . $field_id ." , ";
-     echo strpos($var_tag, 'acebook');
+     echo strpos($var_tag, 'facebook');
     {
         
-       if ( strpos(strtolower($var_tag), "facebook") != false)
+       if ( strpos(strtolower($var_tag), "facebook") !== false)
     {       $contact_facebook = rgar($entry, $field_id);
             echo $contact_facebook . " " . $var_tag;
       }
