@@ -1506,6 +1506,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 $title = $title . " for " . $contact_name;
                 $task = PodioTask::create( $attributes = array(
                 "text" => $title,
+                "private" => false,
                 "description" => $e->body['error'] . " " . $e->body['error_description'])
                 , $options = array("silent" => false) );
             print_r($task);
