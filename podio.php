@@ -1310,7 +1310,6 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
 
 public static function export_feed_toPodio($entry, $form, $feed, $api)
 {
-    print_r($form);
     try
     {
 
@@ -1321,11 +1320,9 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         $merge_vars = array();
         foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
         {
-
-            echo "<br>" . $var_tag . ":";
             $field = RGFormsModel::get_field($form, $field_id);
             $input_type = RGFormsModel::get_input_type($field);
-            echo $field["label"];
+            $sourceLabel = $field["label"];
 
             if(is_array(rgar($field, "choices")) && $input_type != "list")
             {
@@ -1361,19 +1358,25 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             }
             echo $value;
 
-            if ( strpos(strtolower($var_tag), "facebook") !== false)
+            if ((isempty($contact_facebook) && ((strpos(strtolower($var_tag), "facebook") !== false) || ( && strpos(strtolower($label), "facebook") !=false)))
+            {
                 $contact_facebook = $value;
+            }
 
-            if ( strpos(strtolower($var_tag), "name") !== false)
+             if ((isempty($contact_name) && ((strpos(strtolower($var_tag), "name") !== false) || ( && strpos(strtolower($label), "name") !=false)))
+           {
                 $contact_name = $value;
+            }
 
-
-            if ( strpos(strtolower($var_tag), "mail") !== false)
+              if ((isempty($contact_email) && ((strpos(strtolower($var_tag), "mail") !== false) || ( && strpos(strtolower($label), "mail") !=false)))
+          {
                 $contact_email = $value;
+            }
 
-
-            if ( strpos(strtolower($var_tag), "contact") !== false)
+             if ((isempty($contact_target_tag) && ((strpos(strtolower($var_tag), "contact") !== false) || ( && strpos(strtolower($label), "mail") !=false)))
+           {
                 $contact_target_tag = $value;
+            }
 
             switch(strtolower($field_id))
             {
@@ -1417,6 +1420,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
         echo "<br><br>";
         print_r($merge_vars);
+        echo "contact:"  $contact_facebook . " " . $contact_name . " " . $contact_email . ">" . $contact_target_tag;
 
         if (!Podio::is_authenticated())
         {
