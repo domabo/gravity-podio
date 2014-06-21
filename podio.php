@@ -1193,83 +1193,29 @@ private static function get_entry_meta($form){
 }
 
 public static function get_fb_img($fbId){
-
-    $filename = sys_get_temp_dir() . "/" . $fbId . ".jpg";
+    $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
+    $headers = get_headers($url,1);
+    $profileimage = $headers['Location']; //image URL
+ 
+    $ext = pathinfo($profileimage, PATHINFO_EXTENSION);
+    $filename = sys_get_temp_dir() . "/" . $fbId . $ext;
 
     if (file_exists($filename)) {
         echo "$filename already exists, skipping\n\n";
     } else {
 
-
-$url = 'http://graph.facebook.com/' . $user_id . '/picture?type=large';
-$file_handler = fopen($filename , 'w');
-    
-$curl = curl_init($url);
-curl_setopt($curl, CURLOPT_HEADER, false);
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-$ch= self::curl_redir_exec($curl);
-   
-$useragent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.13 (KHTML, wie z. B. Gecko) Chrome/13.0.782.215 Safari/525.13.";
- curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-   
-   
-    curl_setopt($ch, CURLOPT_FILE, $file_handler);
-    curl_setopt($ch, CURLOPT_HEADER, false);
+    $ch = curl_init($profileimage);
+    $fp = fopen( $filename, ‘wb’);
+    curl_setopt($ch, CURLOPT_FILE, $fp);
+    curl_setopt($ch, CURLOPT_HEADER, 0);
+    curl_setpt($ch, CURLOPT_USERAGENT,"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.13 (KHTML, wie z. B. Gecko) Chrome/13.0.782.215 Safari/525.13." );
     curl_exec($ch);
-
     curl_close($ch);
-    fclose($file_handler);
-
-
-
-    }
+    fclose($fp);
     return $filename;
-
-
- 
-
-
 }
 
-  private static function curl_redir_exec($ch)
-    {
-        static $curl_loops = 0;
-        static $curl_max_loops = 20;
-        if ($curl_loops++ >= $curl_max_loops)
-        {
-            $curl_loops = 0;
-            return FALSE;
-        }
-        curl_setopt($ch, CURLOPT_HEADER, true);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        $data = curl_exec($ch);
-        @list($header, $data) = @explode("\n\n", $data, 2);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if ($http_code == 301 || $http_code == 302)
-        {
-            $matches = array();
-            preg_match('/Location:(.*?)\n/', $header, $matches);
-            $url = @parse_url(trim(array_pop($matches)));
-            if (!$url)
-            {
-                //couldn't process the url to redirect to
-                $curl_loops = 0;
-                return $data;
-            }
-            $last_url = parse_url(curl_getinfo($ch, CURLINFO_EFFECTIVE_URL));
-            if (!$url['scheme'])
-                $url['scheme'] = $last_url['scheme'];
-            if (!$url['host'])
-                $url['host'] = $last_url['host'];
-            if (!$url['path'])
-                $url['path'] = $last_url['path'];
-            $new_url = $url['scheme'] . '://' . $url['host'] . $url['path'] . (@$url['query']?'?'.$url['query']:'');
-            return $new_url;
-        } else {
-            $curl_loops=0;
-            return $data;
-        }
-    }
+
 
 private static function get_address($entry, $field_id){
     $street_value = str_replace("  ", " ", trim($entry[$field_id . ".1"]));
