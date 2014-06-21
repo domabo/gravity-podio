@@ -701,8 +701,8 @@ public static function settings_page(){
                             <td><input type="text" id="podio_appid" name="podio_appid" onchange="SelectAppSpace(jQuery(this).val(),jQuery('#podio_apptoken').val());" value="<?php echo $appid; ?>"/> <span id="gf_appname"><?php echo $appname; ?></span></td></tr>
                             <tr><td><label for="podio_apptoken" class="left_header"><?php _e("Podio App Token", "gravityformspodio"); ?> <?php gform_tooltip("podio_apptoken") ?></label></td>
                                 <td><input size="80" type="text" id="podio_apptoken" name="podio_apptoken" value="<?php echo $apptoken; ?>" onchange="SelectAppSpace(jQuery('#podio_appid').val(), jQuery(this).val());"/></td></tr>
-                                <tr><td><label for="podio_spaceid" class="left_header"><?php _e("Podio Workspace Id", "gravityformspodio"); ?> <span id="gf_spaceid"><?php gform_tooltip("podio_spaceid") ?></span></label></td>
-                                    <td><?php echo $spaceid; ?></td></tr>
+                                <tr><td><label for="podio_spaceid" class="left_header"><?php _e("Podio Workspace Id", "gravityformspodio"); ?> <?php gform_tooltip("podio_spaceid") ?></label></td>
+                                    <td><span id="gf_spaceid"><?php echo $spaceid; ?></span></td></tr>
                                 </table>
                             </div>
 
