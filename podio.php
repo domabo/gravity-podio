@@ -1184,7 +1184,7 @@ public static function get_form_fields($form_id){
 
                 if ((RGFormsModel::get_input_type($field) == "email") || strpos(strtolower($label), "mail") !== false)
                 {
-                    $fields[] =   array($field["id"], " (" . __("Contact" , "gravityformspodio") . ")" . $label);
+                    $fields[] =   array($field["id"], " (" . __("Contact" , "gravityformspodio") . ") " . $label);
                 }
                 else
                 {
