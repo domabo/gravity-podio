@@ -1389,7 +1389,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $filename = self::get_fb_img($contact_facebook);
             if ($filename)
             {
-                echo "UPLOADING " . $filename;
+                echo "UPLOADING " . $filename . " " .  $space_id;
                 $existingFiles = PodioFile::get_for_space( $space_id, $attributes = array());
                 print_r ($existingFiles);
 
