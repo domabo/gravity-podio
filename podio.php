@@ -683,21 +683,25 @@ public static function settings_page(){
                 }
             } else
             {
-                $appid=absint($config["meta"]["podio_appid"]);
-                $apptoken= $config["meta"]["podio_apptoken"];
               
                 //getting merge vars from selected app (if one was entered or submitted)
                 if (rgempty("podio_appid", $config["meta"]))
                 {
                     $merge_vars = array();
+                    $appid="";
+                    $apptoken= "";
+                    $spaceid="";
+                    $appname= "-";
                 }
                 else
                 {
                     $merge_vars = self::get_PodioAppMergeVars($config);
+                    $appid=absint($config["meta"]["podio_appid"]);
+                    $apptoken= $config["meta"]["podio_apptoken"];
+                    $spaceid=$config["meta"]["podio_spaceid"];
+                    $appname= $config["meta"]["podio_appname"];
                 }
-
-                  $spaceid=$config["meta"]["podio_spaceid"];
-                $appname= $config["meta"]["podio_appname"];
+   
 
             }
 
