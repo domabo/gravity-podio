@@ -1331,7 +1331,6 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                     foreach ($field['choices'] as $key => $choice)
                     {
                         $id = (string)$field['inputs'][$key]['id'];
-                        echo $id;
                         if (isset($entry[$id]) && $entry[$id] != null):
                             $valueArray[] = $choice["text"];
                         endif;
@@ -1356,8 +1355,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             {
                 $value = rgar($entry, $field_id);
             }
-            echo $value;
-
+       
             if ((empty($contact_facebook)) && ((strpos(strtolower($var_tag), "facebook") !== false) ||  strpos(strtolower($label), "facebook") !=false))
             {
                 $contact_facebook = $value;
@@ -1418,10 +1416,6 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             }
         }
 
-        echo "<br><br>";
-        print_r($merge_vars);
-        echo "contact:"  . $contact_facebook . " " . $contact_name . " " . $contact_email . ">" . $contact_target_tag;
-
         if (!Podio::is_authenticated())
         {
             Podio::authenticate('app', array(
@@ -1468,12 +1462,11 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $merge_vars[$contact_target_tag] = $ep_profile_id;
         }
 
-//  print_r($merge_vars);
         $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
         return true;
     } catch (PodioError $e) 
     {
-        echo "There was an error. The API responded with the error type '{$e->body['error']}' and the mesage '{$e->body['error_description']}'.";
+        $str = "<script>alert(.There was an error. The API responded with the error type " . $e->body['error'] ." and the mesage " . $e->body['error_description'] . "');<script>";
         return false;
     }
 
