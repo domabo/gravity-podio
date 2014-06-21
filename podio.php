@@ -1211,7 +1211,7 @@ public static function get_fb_img($fbId){
     $profileimage = $headers['Location']; //image URL
  
     $ext = pathinfo($profileimage, PATHINFO_EXTENSION);
-    $filename = sys_get_temp_dir() . "/" . $fbId . $ext;
+    $filename = sys_get_temp_dir() . "/" . $fbId . "." . $ext;
 
     if (file_exists($filename)) {
         echo "$filename already exists, skipping\n\n";
