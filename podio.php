@@ -1503,7 +1503,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         {
             $title = "Error in Survey Submission";
             if (!empty($contact_name))
-                $title = $title . " for " . $contactname;
+                $title = $title . " for " . $contact_name;
                 PodioTask::create( $attributes = array(
                 "text" => $title,
                 "description" => $e->body['error'] . " " . $e->body['error_description'])
