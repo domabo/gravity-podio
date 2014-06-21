@@ -1342,6 +1342,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
     if (!empty($contact_target_tag))
     {
+        echo $contact_target_tag;
         $contact_fields = array(
         "name"=>$contact_name,
         "mail"=>array($contact_email)
