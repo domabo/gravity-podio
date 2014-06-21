@@ -1023,10 +1023,10 @@ public static function get_PodioAppMergeVars(&$config)
         $config["meta"]["podio_spaceid"] = $podioApp->space_id;
 
         foreach ($podioApp->fields as $field) {
-                if ($field->status=="active"){
+            if ($field->status=="active"){
                 $mergefield=array();
                 $mergefield["tag"]=$field->external_id;
-             //   $mergefield["externalid"]=$field->external_id;
+//   $mergefield["externalid"]=$field->external_id;
                 $mergefield["name"]=$field->config["label"];
                 $mergefield["req"]=$field->config["required"];
                 $mergefield["type"]=$field->type;
@@ -1195,15 +1195,15 @@ private static function get_entry_meta($form){
 public static function get_fb_img($fbId){
     $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
     $headers = get_headers($url,1);
-   
-    $profileimage = $headers['Location']; //image URL
- 
-    $ext = pathinfo($profileimage, PATHINFO_EXTENSION);
-    $filename = sys_get_temp_dir() . "/" . $fbId . "." . $ext;
 
-    if (file_exists($filename)) {
-          return $filename;
-    } else {
+$profileimage = $headers['Location']; //image URL
+
+$ext = pathinfo($profileimage, PATHINFO_EXTENSION);
+$filename = sys_get_temp_dir() . "/" . $fbId . "." . $ext;
+
+if (file_exists($filename)) {
+    return $filename;
+} else {
 
     $ch = curl_init($profileimage);
     $fp = fopen( $filename, "wb");
@@ -1273,7 +1273,7 @@ public static function get_mapped_field_list($variable_name, $selected_field, $f
 
 public static function export_toPodio($entry, $form, $is_fulfilled = false){
 
-print_r($entry);
+    print_r($entry);
 //Login to Podio
     $api = self::get_api();
     if(!$api)
@@ -1289,7 +1289,7 @@ print_r($entry);
         if(self::is_optin($form, $feed, $entry))
         {
             if (self::export_feed_toPodio($entry, $form, $feed, $api))
-                  gform_update_meta($entry["id"], "podio_is_exported", true);
+                gform_update_meta($entry["id"], "podio_is_exported", true);
         }
         else
         {
@@ -1303,145 +1303,161 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     try
     {
 
-    $appid=absint($feed["meta"]["podio_appid"]);
-    $apptoken= $feed["meta"]["podio_apptoken"];
+        $appid=absint($feed["meta"]["podio_appid"]);
+        $apptoken= $feed["meta"]["podio_apptoken"];
         $spaceid= $feed["meta"]["podio_spaceid"];
 
-    $merge_vars = array();
-    foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
-    {
-
-        echo "<br>" . $var_tag . ":";
-       $field = RGFormsModel::get_field($form, $field_id);
-       $input_type = RGFormsModel::get_input_type($field);
-
-
-       if(in_array($input_type, array("checkbox", "radio", "select", "multiselect"))){
-        print_r($field["choices"]);
-
-            foreach ($field['choices'] as $key => $choice)
-            {
-                    $id = (string)$field['inputs'][$key]['id'];
-                    if (isset($entry[$id]) && $entry[$id] != null):
-                       echo $choice['text'];
-                    endif;
-             }
-       }
-
-
-       if ( strpos(strtolower($var_tag), "facebook") !== false)
-      { $contact_facebook = rgar($entry, $field_id);
-       }
-
-      if ( strpos(strtolower($var_tag), "name") !== false)
-      { $contact_name = rgar($entry, $field_id);
-       }
-
-      if ( strpos(strtolower($var_tag), "mail") !== false)
-      {     $contact_email = rgar($entry, $field_id);
-       }
-
-        if ( strpos(strtolower($var_tag), "contact") !== false)
-      {              $contact_target_tag = $var_tag;
-       }
-
-       switch(strtolower($field_id))
+        $merge_vars = array();
+        foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
         {
-            case "date_created" :
-            $merge_vars[$var_tag] = rgar($entry, "date_created");
-            break;
-            case "form_title" :
-            $merge_vars[$var_tag] = rgar($form, "title");
-            break;
-            case "ip" :
-            $merge_vars[$var_tag] = rgar($entry, "ip");
-            break;
-            case "source_url" :
-            $merge_vars[$var_tag] = rgar($entry, "source_url");
-            break;
-            default :
+
+            echo "<br>" . $var_tag . ":";
             $field = RGFormsModel::get_field($form, $field_id);
-            if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "address") 
-                $merge_vars[$var_tag] = self::get_address($entry, $field_id);
-            else if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "name") 
-            {
-                 $contact_name = self::get_name($entry, $field_id);
-                 $merge_vars[$var_tag] = $contact_name;
-            }
-            else if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "email") 
-            {
-                 $contact_email = rgar($entry, $field_id);
-                 $contact_target_tag = $var_tag;
-             }
-           else if ($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "phone" && $field["phoneFormat"] == "standard") 
-            {
-                $phone = rgar($entry, $field_id);
-                if (preg_match('/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/', $phone, $matches)){
-                    $phone = sprintf("%s-%s-%s", $matches[1], $matches[2], $matches[3]);
+            $input_type = RGFormsModel::get_input_type($field);
+
+
+            if(is_array(rgar($field, "choices")) && $input_type != "list"){
+                if ($input_type == "checkbox") {
+                    $valueArray = array();
+                    foreach ($field['choices'] as $key => $choice)
+                    {
+                        $id = (string)$field['inputs'][$key]['id'];
+                        if (isset($entry[$id]) && $entry[$id] != null):
+                            $value[] = $choice['text'];
+                        endif;
+                    }
+                    $value = implode(",", $value);
+                } else if ($input_type == "radio") {
+                    $value = rgar($entry, $field_id);
+                    foreach ($field['choices'] as $choice)
+                    {
+                        if ($choice["value"] == $value)
+                        {
+
+                            $value = $choice["text"];
+                            break;
+                        }
+                    }
+                } else
+                {
+                    $value = rgar($entry, $field_id);
                 }
-                $merge_vars[$var_tag] = $phone;
-            } else if (!empty($field_id))
-                $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", rgar($entry, $field_id), $form["id"], $field_id, $entry);
-            break;
-        }
-    }
-
-
-
-    if (!Podio::is_authenticated())
-    {
-        Podio::authenticate('app', array(
-            'app_id' => $appid,
-            'app_token' => $apptoken
-            ));
-    }
-
-  if (!empty($contact_target_tag))
-    {
-        $contact_fields = array(
-        "name"=>$contact_name,
-        "mail"=>array($contact_email)
-        );
-
-
-        if (!empty($contact_facebook))
-        {
-            $filename = self::get_fb_img($contact_facebook);
-            if ($filename)
+            } else
             {
-                $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
-                $contact_fields["avatar"] = ($fid->file_id);
+                $value = rgar($entry, $field_id);
+            }
+
+            if ( strpos(strtolower($var_tag), "facebook") !== false)
+                $contact_facebook = $value;
+
+            if ( strpos(strtolower($var_tag), "name") !== false)
+                $contact_name = $value;
+
+
+            if ( strpos(strtolower($var_tag), "mail") !== false)
+                $contact_email = $value;
+
+
+            if ( strpos(strtolower($var_tag), "contact") !== false)
+                $contact_target_tag = $value;
+
+            switch(strtolower($field_id))
+            {
+                case "date_created" :
+                $merge_vars[$var_tag] = rgar($entry, "date_created");
+                break;
+                case "form_title" :
+                $merge_vars[$var_tag] = rgar($form, "title");
+                break;
+                case "ip" :
+                $merge_vars[$var_tag] = rgar($entry, "ip");
+                break;
+                case "source_url" :
+                $merge_vars[$var_tag] = rgar($entry, "source_url");
+                break;
+                default :
+                if($field_id == intval($field_id) && $input_type == "address") 
+                    $merge_vars[$var_tag] = self::get_address($entry, $field_id);
+                else if($field_id == intval($field_id) && $input_type == "name") 
+                {
+                    $contact_name = self::get_name($entry, $field_id);
+                    $merge_vars[$var_tag] = $contact_name;
+                }
+                else if($field_id == intval($field_id) && $input_type == "email") 
+                {
+                    $contact_email = $value;
+                    $contact_target_tag = $var_tag;
+                }
+                else if ($field_id == intval($field_id) && $input_type == "phone" && $field["phoneFormat"] == "standard") 
+                {
+                    $phone = rgar($entry, $field_id);
+                    if (preg_match('/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/', $phone, $matches)){
+                        $phone = sprintf("%s-%s-%s", $matches[1], $matches[2], $matches[3]);
+                    }
+                    $merge_vars[$var_tag] = $phone;
+                } else if (!empty($field_id))
+                $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", $value, $form["id"], $field_id, $entry);
+                break;
             }
         }
 
-        $existingContacts = PodioContact::get_for_app( $appid, $attributes = array(
-              "mail" => array($contact_email),
-              "name" => $contact_name
-            ) );
-    
+        echo "<br><br>";
+        print_r($merge_vars);
+
+        if (!Podio::is_authenticated())
+        {
+            Podio::authenticate('app', array(
+                'app_id' => $appid,
+                'app_token' => $apptoken
+                ));
+        }
+
+        if (!empty($contact_target_tag))
+        {
+            $contact_fields = array(
+                "name"=>$contact_name,
+                "mail"=>array($contact_email)
+                );
+
+
+            if (!empty($contact_facebook))
+            {
+                $filename = self::get_fb_img($contact_facebook);
+                if ($filename)
+                {
+                    $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
+                    $contact_fields["avatar"] = ($fid->file_id);
+                }
+            }
+
+            $existingContacts = PodioContact::get_for_app( $appid, $attributes = array(
+                "mail" => array($contact_email),
+                "name" => $contact_name
+                ) );
+
             if (count($existingContacts)>0)
             {
                 $first =  $existingContacts[0];
                 $ep_profile_id = $first->profile_id;
-            
+
                 PodioContact::update( $ep_profile_id, $contact_fields );
 
-        } else
-        {
-            $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
+            } else
+            {
+                $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
+            }
+
+            $merge_vars[$contact_target_tag] = $ep_profile_id;
         }
-  
-        $merge_vars[$contact_target_tag] = $ep_profile_id;
+
+//  print_r($merge_vars);
+        $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
+        return true;
+    } catch (PodioError $e) 
+    {
+        echo "There was an error. The API responded with the error type '{$e->body['error']}' and the mesage '{$e->body['error_description']}'.";
+        return false;
     }
-    
-  //  print_r($merge_vars);
-    $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
-    return true;
-} catch (PodioError $e) 
-{
-  echo "There was an error. The API responded with the error type '{$e->body['error']}' and the mesage '{$e->body['error_description']}'.";
-  return false;
-}
 
 }
 
