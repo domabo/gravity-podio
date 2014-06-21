@@ -1189,21 +1189,22 @@ public static function get_form_fields($form_id){
                 }
             }
         }
-        return $fields;
     }
+    return $fields;
+}
 
-    private static function get_entry_meta($form){
-        $entry_meta = GFFormsModel::get_entry_meta($form["id"]);
-        $keys = array_keys($entry_meta);
-        foreach ($keys as $key){
-            array_push($form["fields"],array("id" => $key , "label" => $entry_meta[$key]['label']));
-        }
-        return $form;
+private static function get_entry_meta($form){
+    $entry_meta = GFFormsModel::get_entry_meta($form["id"]);
+    $keys = array_keys($entry_meta);
+    foreach ($keys as $key){
+        array_push($form["fields"],array("id" => $key , "label" => $entry_meta[$key]['label']));
     }
+    return $form;
+}
 
-    public static function get_fb_img($fbId){
-        $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
-        $headers = get_headers($url,1);
+public static function get_fb_img($fbId){
+    $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
+    $headers = get_headers($url,1);
 
 $profileimage = $headers['Location']; //image URL
 
