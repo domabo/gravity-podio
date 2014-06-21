@@ -1387,7 +1387,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
             if ((empty($contact_target_tag)) && ((strpos(strtolower($var_tag), "contact") !== false) ||  strpos(strtolower($label), "mail") !=false))
             {
-                $contact_target_tag = $value;
+                $contact_target_tag = $var_tag;
             }
 
             switch(strtolower($field_id))
