@@ -1396,7 +1396,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         }
 
 
-        $existingContacts = PPodioContact::get_for_app( $appid, $attributes = array(
+        $existingContacts = PodioContact::get_for_app( $appid, $attributes = array(
             "contact_type" => "space",
               "{mail}" => array($contact_email)
             ) );
