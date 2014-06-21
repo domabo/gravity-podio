@@ -1351,7 +1351,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
         $merge_vars[$contact_target_tag] = $ep_profile_id;
     }
-    echo $merge_vars;
+    echo $merge_vars[0];
     echo $appid;
 
     $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
