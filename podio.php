@@ -1192,6 +1192,28 @@ private static function get_entry_meta($form){
     return $form;
 }
 
+public static function get_fb_img($fbId){
+
+    $filename = sys_get_temp_dir() . "/" . $fbId . ".jpg";
+
+    if (file_exists($filename)) {
+        echo "$filename already exists, skipping\n\n";
+    } else {
+           $bd = curl_init();
+         curl_setopt($bd, CURLOPT_URL, "http://graph.facebook.com/". $fbid . "/picture");
+        $fp = fopen($filename, "w+");
+         curl_setopt($bd, CURLOPT_BINARYTRANSFER,1);
+         curl_setopt($bd, CURLOPT_HEADER, 0);
+        curl_setopt($bd, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt ($bd, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($bd, CURLOPT_FILE, $fp);
+         curl_exec($bd);
+         curl_close ($bd);
+        fclose($fp);
+    }
+    return $filename;
+}
+
 private static function get_address($entry, $field_id){
     $street_value = str_replace("  ", " ", trim($entry[$field_id . ".1"]));
     $street2_value = str_replace("  ", " ", trim($entry[$field_id . ".2"]));
@@ -1347,6 +1369,14 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
 
         $merge_vars[$contact_target_tag] = $ep_profile_id;
+
+        if (!empty($contact_facebook))
+        {
+
+            $filename = self::get_fb_img($contact_facebook);
+            echo $filename;
+     //       $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg")
+        }
     }
     print_r($merge_vars);
     echo $appid;
