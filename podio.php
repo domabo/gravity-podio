@@ -1180,15 +1180,15 @@ public static function get_form_fields($form_id){
             }
             else if(!rgar($field,"displayOnly")){
 
-                $label =  array($field["id"], GFCommon::get_label($field);
+                $label =  GFCommon::get_label($field);
 
                 if ((RGFormsModel::get_input_type($field) == "email") || strpos(strtolower($label), "mail") !== false)
                 {
-                    $fields[] =  " (" . __("Contact" , "gravityformspodio") . ")" . array($field["id"], GFCommon::get_label($field));
+                    $fields[] =   array($field["id"], " (" . __("Contact" , "gravityformspodio") . ")" . $label);
                 }
                 else
                 {
-                    $fields[] =  array($field["id"], GFCommon::get_label($field));
+                    $fields[] =  array($field["id"], $label);
                 }
             }
         }
