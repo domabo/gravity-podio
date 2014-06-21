@@ -1171,9 +1171,16 @@ public static function get_form_fields($form_id){
 //If this is an email field, add contact to the list
                 if(RGFormsModel::get_input_type($field) == "email")
                     $fields[] =  array($field["id"], GFCommon::get_label($field) . " (" . __("Contact" , "gravityformspodio") . ")");
+  
+               if(RGFormsModel::get_input_type($field) == "checkbox")
+               {
+                  $fields[] =  array($field["id"], GFCommon::get_label($field));
+               } else
+               {
 
                 foreach($field["inputs"] as $input)
                     $fields[] =  array($input["id"], GFCommon::get_label($field, $input["id"]));
+            }
             }
             else if(!rgar($field,"displayOnly")){
                 $fields[] =  array($field["id"], GFCommon::get_label($field));
