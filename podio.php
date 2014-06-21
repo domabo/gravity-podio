@@ -1199,19 +1199,22 @@ public static function get_fb_img($fbId){
     if (file_exists($filename)) {
         echo "$filename already exists, skipping\n\n";
     } else {
-           $bd = curl_init();
-         curl_setopt($bd, CURLOPT_URL, "http://graph.facebook.com/". $fbid . "/picture");
-        $fp = fopen($filename, "w+");
-         curl_setopt($bd, CURLOPT_BINARYTRANSFER,1);
-         curl_setopt($bd, CURLOPT_HEADER, 0);
-        curl_setopt($bd, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt ($bd, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($bd, CURLOPT_FILE, $fp);
-         curl_exec($bd);
-         curl_close ($bd);
-        fclose($fp);
+           $fp = fopen ($filename, 'w+');              // open file handle
+
+    $ch = curl_init( "http://graph.facebook.com/". $fbid . "/picture");
+    curl_setopt($ch, CURLOPT_FILE, $fp);          // output to file
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 1000);      // some large value to allow curl to run for a long time
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
+     curl_exec($ch);
+
+    curl_close($ch);                              // closing curl handle
+    fclose($fp);   
     }
     return $filename;
+
+
+
 }
 
 private static function get_address($entry, $field_id){
