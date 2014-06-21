@@ -1287,7 +1287,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     $apptoken= $feed["meta"]["podio_apptoken"];
     $spaceid= $feed["meta"]["podio_spaceid"];
 
-    $merge_vars = array('');
+    $merge_vars = array();
     foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
     {
          echo $field_id.":".rgar($entry, $field_id).", ";
