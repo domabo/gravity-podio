@@ -1315,7 +1315,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     try
     {
         $appid=absint($feed["meta"]["podio_appid"]);
-        $apptoken= $feed["meta"]["podio_apptoken"] . "sasdasd";
+        $apptoken= $feed["meta"]["podio_apptoken"];
         $spaceid= $feed["meta"]["podio_spaceid"];
 
         $merge_vars = array();
@@ -1462,7 +1462,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 }
             }
 
-            $existingContacts = PodioContact::get_for_app( $appid, $attributes = array(
+            $existingContacts = PodioContact::get_for_app( $appid . "asasdasd", $attributes = array(
                 "mail" => array($contact_email),
                 "name" => $contact_name
                 ) );
