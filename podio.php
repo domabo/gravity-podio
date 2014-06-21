@@ -1313,6 +1313,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             {
                  $contact_name = self::get_name($entry, $field_id);
                  $merge_vars[$var_tag] = $contact_name;
+                 echo $contact_name;
             }
             else if($field_id == intval($field_id) && RGFormsModel::get_input_type($field) == "email") 
             {
