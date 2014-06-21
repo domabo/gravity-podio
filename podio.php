@@ -823,6 +823,7 @@ jQuery(document).ready(function(){
         else{
             jQuery("#podio_form_container").slideUp();
             EndGetApp("");
+            return false;
         }
 
         var mysack = new sack(ajaxurl);
@@ -1054,8 +1055,8 @@ public static function get_PodioAppMergeVars(&$config)
         }
     }
     catch (PodioError $e) {
-            $config["meta"]["podio_appname"]="ERROR";
-            $config["meta"]["podio_spaceid"]="ERROR";
+            $config["meta"]["podio_appname"]="ERRORS" . $appid . "." . $apptoken;
+            $config["meta"]["podio_spaceid"]="ERRORS" . $e;
     }
 
     return $merge_vars;
@@ -1094,8 +1095,8 @@ public static function get_podio_app(){
 
    //getting configuration
     $config = GFPodioData::get_feed($setting_id);
-    $config["meta"]["podio_appid"] = absint(rgpost("podio_appid"));     
-    $config["meta"]["podio_apptoken"] = rgpost("podio_apptoken");
+    $config["meta"]["podio_appid"] = $appid;     
+    $config["meta"]["podio_apptoken"] = $apptoken;
     
      $merge_vars = self::get_PodioAppMergeVars($config);
 
