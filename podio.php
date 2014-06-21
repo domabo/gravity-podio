@@ -1206,7 +1206,7 @@ public static function get_fb_img($fbId){
     $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
     $headers = get_headers($url,1);
     echo $url;
-    
+
     print_r ($headers);
     $profileimage = $headers['Location']; //image URL
  
@@ -1322,7 +1322,9 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         
        if ( strpos(strtolower($var_tag), "facebook") != 0)
         echo "SETTING";
+    {
              $contact_facebook = rgar($entry, $field_id);
+             echo $contact_facebook;
 
        switch(strtolower($field_id))
         {
