@@ -1399,11 +1399,9 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         }
 
 
-        $existingContacts = PodioContact::get_for_space( $space_id, $attributes = array(
+        $existingContacts = PPodioContact::get_for_app( $appid, $attributes = array(
             "contact_type" => "space",
-            "exclude_self" => "true",
-            "type" => "mini",
-            "{mail}" => array($contact_email)
+              "{mail}" => array($contact_email)
             ) );
 
         print_r($existingContacts);
