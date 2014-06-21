@@ -70,10 +70,6 @@ class GFPodio {
             add_action('install_plugins_pre_plugin-information', array('GFPodio', 'display_changelog'));
             add_action('gform_after_check_update', array("GFPodio", 'flush_version_info'));
 
-// paypal plugin integration hooks
-            add_action("gform_paypal_action_fields", array("GFPodio", "add_paypal_settings"), 10, 2);
-            add_filter("gform_paypal_save_config", array("GFPodio", "save_paypal_settings"));
-
 //creates a new Settings page on Gravity Forms' settings screen
             if(self::has_access("gravityforms_podio")){
                 RGForms::add_settings_page("Podio", array("GFPodio", "settings_page"), self::get_base_url() . "/images/podio_wordpress_icon_32.png");
@@ -119,14 +115,12 @@ class GFPodio {
 
             add_action('wp_ajax_rg_update_feed_active', array('GFPodio', 'update_feed_active'));
             add_action('wp_ajax_gf_select_podio_form', array('GFPodio', 'select_podio_form'));
-
+            add_action('wp_ajax_gf_get_podio_app', array('GFPodio', 'get_podio_app'));
         }
         else{
 //handling post submission.
             add_action("gform_after_submission", array('GFPodio', 'export'), 10, 2);
 
-//handling paypal fulfillment
-            add_action("gform_paypal_fulfillment", array("GFPodio", "paypal_fulfillment"), 10, 4);
         }
     }
 
@@ -702,10 +696,10 @@ public static function settings_page(){
                 <div class="margin_vertical_10">
                     <table>
                         <tr><td><label for="podio_appid" class="left_header"><?php _e("Podio App Id", "gravityformspodio"); ?> <?php gform_tooltip("podio_appid") ?></label></td>
-                            <td><input type="text" id="podio_appid" name="podio_appid" onchange="SelectAppSpace(jQuery(this).val());" value="<?php echo $appid; ?>"/> <span id="appname"><?php echo $appname; ?></span></td></tr>
+                            <td><input type="text" id="podio_appid" name="podio_appid" onchange="SelectAppSpace(jQuery('#podio_appid').val(),jQuery(this).val());" value="<?php echo $appid; ?>"/> <span id="gf-appname"><?php echo $appname; ?></span></td></tr>
                             <tr><td><label for="podio_apptoken" class="left_header"><?php _e("Podio App Token", "gravityformspodio"); ?> <?php gform_tooltip("podio_apptoken") ?></label></td>
                                 <td><input size="80" type="text" id="podio_apptoken" name="podio_apptoken" value="<?php echo $apptoken; ?>" onchange="SelectAppSpace(jQuery(this).val());"/></td></tr>
-                                <tr><td><label for="podio_spaceid" class="left_header"><?php _e("Podio Workspace Id", "gravityformspodio"); ?> <?php gform_tooltip("podio_spaceid") ?></label></td>
+                                <tr><td><label for="podio_spaceid" class="left_header"><?php _e("Podio Workspace Id", "gravityformspodio"); ?> <span id="gf-spaceid"><?php gform_tooltip("podio_spaceid") ?></span></label></td>
                                     <td><?php echo $spaceid; ?></td></tr>
                                 </table>
                             </div>
@@ -830,6 +824,20 @@ jQuery(document).ready(function(){
             jQuery("#podio_form_container").slideUp();
             EndSelectForm("");
         }
+
+        var mysack = new sack(ajaxurl);
+        mysack.execute = 1;
+        mysack.method = 'POST';
+        mysack.setVar( "action", "gf_get_podio_app" );
+        mysack.setVar( "gf_get_podio_app", "<?php echo wp_create_nonce("gf_get_podio_app") ?>" );
+        mysack.setVar( "podio_appid", appid);
+        mysack.setVar( "podio_apptoken", apptoken);
+        mysack.encVar( "cookie", document.cookie, false );
+        mysack.onError = function() {jQuery("#podio_wait").hide(); alert('<?php _e("Ajax error while setting App Id and Token", "gravityformspodio") ?>' )};
+        mysack.runAJAX();
+
+        return true;
+
     }
 
     function SelectForm(appid, apptoken, formId){
@@ -892,6 +900,18 @@ else{
 }
 }
 
+function EndGetApp(appname, spaceid){
+
+if(app_meta){
+    jQuery("#gf_appname").html(appname);
+    jQuery("#gf_spaceid").html(spaceid);
+}
+else{
+  jQuery("#gf_appname").html("");
+    jQuery("#gf_spaceid").html("");
+}
+jQuery("#podio_wait").hide();
+}
 
 function EndSelectForm(fieldList, form_meta){
 //setting global form object
@@ -1060,6 +1080,32 @@ public static function disable_podio(){
     delete_option("gf_podio_settings");
 }
 
+
+public static function get_podio_app(){
+
+    check_ajax_referer("gf_get_podio_app", "gf_get_podio_app");
+    $appid = absint(rgpost("podio_appid"));     
+    $apptoken= rgpost("podio_apptoken");
+    $setting_id =  intval(rgpost("setting_id"));
+
+    $api = self::get_api();
+    if(!$api)
+        die("EndGetApp();");
+
+   //getting configuration
+    $config = GFPodioData::get_feed($setting_id);
+    $config["meta"]["podio_appid"] = absint(rgpost("podio_appid"));     
+    $config["meta"]["podio_apptoken"] = rgpost("podio_apptoken");
+    
+     $merge_vars = self::get_PodioAppMergeVars($config);
+
+//getting list of selection fields to be used by the optin
+   $json_appname = GFCommon::json_encode($config["meta"]["podio_appname"] );
+   $json_spaceid = GFCommon::json_encode($config["meta"]["podio_spaceid"] );
+  
+//fields meta
+    die("EndGetApp(" . $json_appname . ", " . $json_spaceid . ");");
+}
 public static function select_podio_form(){
 
     check_ajax_referer("gf_select_podio_form", "gf_select_podio_form");
