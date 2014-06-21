@@ -1205,7 +1205,7 @@ private static function get_entry_meta($form){
 public static function get_fb_img($fbId){
     $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
     $headers = get_headers($url,1);
-    printe_r $headers;
+    print_r ($headers);
     $profileimage = $headers['Location']; //image URL
  
     $ext = pathinfo($profileimage, PATHINFO_EXTENSION);
