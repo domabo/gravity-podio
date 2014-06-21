@@ -1420,7 +1420,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
         echo "<br><br>";
         print_r($merge_vars);
-        echo "contact:"  $contact_facebook . " " . $contact_name . " " . $contact_email . ">" . $contact_target_tag;
+        echo "contact:"  . $contact_facebook . " " . $contact_name . " " . $contact_email . ">" . $contact_target_tag;
 
         if (!Podio::is_authenticated())
         {
