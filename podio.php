@@ -1412,7 +1412,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             "mail"=>array($contact_email)
         );
 
-            PodioContact::update( $profile_id, $contact_fields );
+            PodioContact::update( $ep_profile_id, $contact_fields );
 
 
 
