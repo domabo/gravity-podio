@@ -1036,8 +1036,8 @@ public static function get_PodioAppMergeVars(&$config)
 
         foreach ($podioApp->fields as $field) {
             $mergefield=array();
-            $mergefield["tag"]=$field->field_id;
-            $mergefield["externalid"]=$field->external_id;
+            $mergefield["tag"]=$field->external_id;
+         //   $mergefield["externalid"]=$field->external_id;
             $mergefield["name"]=$field->config["label"];
             $mergefield["req"]=$field->config["required"];
             $mergefield["type"]=$field->type;
@@ -1290,7 +1290,11 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     $merge_vars = array();
     foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
     {
-         echo $field_id.":".rgar($entry, $field_id).", ";
+        
+
+       if (startsWith($strtolower(var_tag), 'facebook'); ) 
+            $contact_facebook = rgar($entry, $field_id);
+
        switch(strtolower($field_id))
         {
             case "date_created" :
