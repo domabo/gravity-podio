@@ -623,6 +623,9 @@ public static function settings_page(){
                     $merge_vars = self::get_PodioAppMergeVars($config);
                 }
 
+                $appname= $config["meta"]["podio_apptoken"];
+
+
                $field_map = array();
                 foreach($merge_vars as $var){
                     $field_name = "podio_map_field_" . $var["tag"];
@@ -679,6 +682,7 @@ public static function settings_page(){
                 $appid=absint($config["meta"]["podio_appid"]);
                 $apptoken= $config["meta"]["podio_apptoken"];
                 $spaceid=$config["meta"]["podio_spaceid"];
+                $appname= $config["meta"]["podio_apptoken"];
 
                         //getting merge vars from selected app (if one was entered or submitted)
                 if (rgempty("podio_appid", $config["meta"]))
@@ -692,7 +696,6 @@ public static function settings_page(){
 
             }
 
-            $appname="IN PROCESS";
            ?>
             <form method="post" action="">
                 <input type="hidden" name="podio_setting_id" value="<?php echo $id ?>"/>
