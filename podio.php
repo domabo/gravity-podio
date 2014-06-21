@@ -1314,10 +1314,11 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         echo RGFormsModel::get_input_type($field) . ":";
         if (RGFormsModel::get_input_type($field)=="checkbox")
         {
-               $lead = RGFormsModel::get_lead( $lead_id ); 
+             
              }
 
-        print_r(GFFormsModel::get_field_value_long($lead, $field_id, $form)); 
+         $lead = RGFormsModel::get_lead( $lead_id ); 
+                print_r(GFFormsModel::get_field_value_long($lead, $field_id, $form)); 
 
        if ( strpos(strtolower($var_tag), "facebook") !== false)
       { $contact_facebook = rgar($entry, $field_id);
