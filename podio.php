@@ -1367,12 +1367,12 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
           }
 
         
-        print_r( $fid["file_id"]);
+        print_r( $fid->file_id);
       
         $contact_fields = array(
         "name"=>$contact_name,
         "mail"=>array($contact_email),
-        "avatar"=>$fid["file_id"]
+        "avatar"=>$fid->file_id
         );
 
         $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
