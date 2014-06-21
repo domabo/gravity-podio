@@ -1389,17 +1389,20 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $filename = self::get_fb_img($contact_facebook);
             if ($filename)
             {
+
+                $existingFiles = PodioFile::get_for_app( $appid, $attributes = array());
+                print_r ($existingFiles);
+
                 $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
                 print_r( $fid->file_id);
                 $contact_fields["avatar"] = ($fid->file_id);
             }
         }
 
-
         $existingContacts = PodioContact::get_for_app( $appid, $attributes = array(
               "mail" => array($contact_email)
             ) );
-  //  print_r($existingContacts);
+      //  print_r($existingContacts);
 
         if (count($existingContacts)>0)
         {
@@ -1407,14 +1410,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $ep_profile_id = $first->profile_id;
             echo "<br>FOUND " . $profile_id;
 
-            $contact_fields = array(
-           "name"=>$contact_name . " UPDATED2",
-            "mail"=>array($contact_email)
-        );
-
             PodioContact::update( $ep_profile_id, $contact_fields );
-
-
 
         } else
         {
