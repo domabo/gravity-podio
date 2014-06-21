@@ -1456,8 +1456,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         return true;
     } catch (PodioError $e) 
     {
-        str$ =  "There was an error. The API responded with the error type " . $e->body['error'] ." and the mesage " . $e->body['error_description'] . ".";
-        echo str$;
+        echo "There was an error. The API responded with the error type " . $e->body['error'] ." and the mesage " . $e->body['error_description'] . ".";
         echo "<script>alert('Unfortunately an error has occured in the submission.  Please see the window for more details');</script>";
         return false;
     }
