@@ -623,7 +623,7 @@ public static function settings_page(){
                     $merge_vars = self::get_PodioAppMergeVars($config);
                 }
 
-                $appname= $config["meta"]["podio_apptoken"];
+                $appname= $config["meta"]["podio_appname"];
 
 
                $field_map = array();
@@ -682,7 +682,7 @@ public static function settings_page(){
                 $appid=absint($config["meta"]["podio_appid"]);
                 $apptoken= $config["meta"]["podio_apptoken"];
                 $spaceid=$config["meta"]["podio_spaceid"];
-                $appname= $config["meta"]["podio_apptoken"];
+                $appname= $config["meta"]["podio_appname"];
 
                         //getting merge vars from selected app (if one was entered or submitted)
                 if (rgempty("podio_appid", $config["meta"]))
