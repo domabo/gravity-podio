@@ -1358,7 +1358,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     }
 
 
-    echo "CONTACT ". $contact_facebook . ";"
+    echo "CONTACT ". $contact_facebook . ";";
     if (!empty($contact_target_tag))
     {
         echo $contact_target_tag;
