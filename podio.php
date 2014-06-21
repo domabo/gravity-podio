@@ -820,7 +820,12 @@ jQuery(document).ready(function(){
     function SelectAppSpace(appid, apptoken){
         if((appid !="") && (apptoken != "")){
             jQuery("#podio_form_container").slideDown();
-            jQuery("#gf_podio_form").val("");
+        }
+        else if ((appid !="") || (apptoken != ""))
+        {
+            jQuery("#podio_form_container").slideDown();
+            EndGetApp("");
+            return false;
         }
         else{
             jQuery("#podio_form_container").slideUp();
