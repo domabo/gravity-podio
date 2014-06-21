@@ -26,7 +26,17 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
+  @ini_set( 'log_errors', 'Off' );
 
+@ini_set( 'display_errors', 'On' );
+
+@ini_set( 'error_reporting', E_ALL );
+
+define( 'WP_DEBUG', true );
+
+define( 'WP_DEBUG_LOG', false );
+
+define( 'WP_DEBUG_DISPLAY', true );
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
 
@@ -44,17 +54,7 @@ class GFPodio {
 //Plugin starting point. Will load appropriate files
     public static function init(){
 
-         @ini_set( 'log_errors', 'Off' );
-
-@ini_set( 'display_errors', 'On' );
-
-@ini_set( 'error_reporting', E_ALL );
-
-define( 'WP_DEBUG', true );
-
-define( 'WP_DEBUG_LOG', false );
-
-define( 'WP_DEBUG_DISPLAY', true );
+       
 //supports logging
         add_filter("gform_logging_supported", array("GFPodio", "set_logging_supported"));
 
@@ -1095,11 +1095,9 @@ public static function select_podio_form(){
     $selection_fields_json = json_encode($selection_fields);
 
     $group_condition = array();
-    $group_names = array();
-    $group_names_json = json_encode($group_names);
   
 //fields meta
-    die("EndSelectForm(" . $str_json . ", " . $form_json );");
+    die("EndSelectForm(" . $str_json . ", " . $form_json . ");");
 }
 
 private static function get_field_mapping($config, $form_id, $merge_vars){
