@@ -1508,7 +1508,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 "text" => $title,
                 "description" => "TEST",
                 "private" => false,
-                "responsible" => "2274231",
+                "responsible" => 2274231,
                 'due_on' => '2014-07-01 16:48:32')
                 , $options = array("silent" => false) );
             print_r($task);
