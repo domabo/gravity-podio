@@ -1358,22 +1358,22 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             }
             echo $value;
 
-            if ((empty($contact_facebook)) && ((strpos(strtolower($var_tag), "facebook") !== false) || ( && strpos(strtolower($label), "facebook") !=false)))
+            if ((empty($contact_facebook)) && ((strpos(strtolower($var_tag), "facebook") !== false) ||  strpos(strtolower($label), "facebook") !=false))
             {
                 $contact_facebook = $value;
             }
 
-            if ((empty($contact_name)) && ((strpos(strtolower($var_tag), "name") !== false) || ( && strpos(strtolower($label), "name") !=false)))
+            if ((empty($contact_name)) && ((strpos(strtolower($var_tag), "name") !== false) ||  strpos(strtolower($label), "name") !=false))
             {
                 $contact_name = $value;
             }
 
-            if ((empty($contact_email)) && ((strpos(strtolower($var_tag), "mail") !== false) || ( && strpos(strtolower($label), "mail") !=false)))
+            if ((empty($contact_email)) && ((strpos(strtolower($var_tag), "mail") !== false) ||  strpos(strtolower($label), "mail") !=false))
             {
                 $contact_email = $value;
             }
 
-            if ((empty($contact_target_tag)) && ((strpos(strtolower($var_tag), "contact") !== false) || ( && strpos(strtolower($label), "mail") !=false)))
+            if ((empty($contact_target_tag)) && ((strpos(strtolower($var_tag), "contact") !== false) ||  strpos(strtolower($label), "mail") !=false))
             {
                 $contact_target_tag = $value;
             }
