@@ -1304,7 +1304,6 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     {
         
        if ( strpos(strtolower($var_tag), "facebook") != 0)
-        echo $var_tag;
              $contact_facebook = rgar($entry, $field_id);
 
        switch(strtolower($field_id))
@@ -1361,23 +1360,26 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     echo "CONTACT ". $contact_facebook . ";";
     if (!empty($contact_target_tag))
     {
-        echo $contact_target_tag;
+         if (!empty($contact_facebook))
+        {
+            $filename = self::get_fb_img($contact_facebook);
+           $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg")
+           
+        }
+
+        echo "FACEBOOOK " . $filename . $fid;
+      
         $contact_fields = array(
         "name"=>$contact_name,
-        "mail"=>array($contact_email)
+        "mail"=>array($contact_email),
+        "avatar"=>$fid
         );
 
         $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
 
         $merge_vars[$contact_target_tag] = $ep_profile_id;
 
-        if (!empty($contact_facebook))
-        {
-echo "DOWNLOADING FROM FACEBOOK";
-            $filename = self::get_fb_img($contact_facebook);
-            echo $filename;
-     //       $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg")
-        }
+       
     }
     print_r($merge_vars);
     echo $appid;
