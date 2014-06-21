@@ -1304,6 +1304,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     {
         
        if ( strpos(strtolower($var_tag), "facebook") != 0)
+        echo "SETTING";
              $contact_facebook = rgar($entry, $field_id);
 
        switch(strtolower($field_id))
@@ -1363,11 +1364,12 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
          if (!empty($contact_facebook))
         {
             $filename = self::get_fb_img($contact_facebook);
+            echo "FACEBOOOK " . $filename[0];
            $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
            
         }
 
-        echo "FACEBOOOK " . $filename;
+        
         print_r( $fid);
       
         $contact_fields = array(
