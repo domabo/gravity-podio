@@ -1389,10 +1389,6 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $filename = self::get_fb_img($contact_facebook);
             if ($filename)
             {
-                echo "UPLOADING " . $filename . " " .  $spaceid;
-                $existingFiles = PodioFile::get_for_space( $spaceid, $attributes = array());
-                print_r ($existingFiles);
-
                 $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
                 print_r( $fid->file_id);
                 $contact_fields["avatar"] = ($fid->file_id);
@@ -1400,10 +1396,10 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         }
 
         $existingContacts = PodioContact::get_for_app( $appid, $attributes = array(
-              "mail" => array($contact_email)
+              "mail" => array($contact_email),
+              "name" => $contact_name
             ) );
-      //  print_r($existingContacts);
-
+    
         if (count($existingContacts)>0)
         {
             $first =  $existingContacts[0];
