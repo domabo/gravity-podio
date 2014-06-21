@@ -1493,8 +1493,8 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             if (!empty($contact_name))
                 $title = $title . " for " . $contactname;
             PodioTask::create( $attributes = array(
-                "text": $title,
-                "description": $e->body['error'] . " " . $e->body['error_description']
+                "text" => $title,
+                "description" => $e->body['error'] . " " . $e->body['error_description'])
                 , $options = array("silent" => true) );
             return false;
         }  
