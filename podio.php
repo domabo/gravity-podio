@@ -1215,6 +1215,7 @@ public static function get_fb_img($fbId){
 
     if (file_exists($filename)) {
         echo "$filename already exists, skipping\n\n";
+         return $filename;
     } else {
 
     $ch = curl_init($profileimage);
