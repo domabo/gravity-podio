@@ -1325,6 +1325,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     {
              $contact_facebook = rgar($entry, $field_id);
              echo $contact_facebook;
+         }
 
        switch(strtolower($field_id))
         {
