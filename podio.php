@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
 
- @ini_set( 'log_errors', 'Off' );
+@ini_set( 'log_errors', 'Off' );
 
 @ini_set( 'display_errors', 'On' );
 
@@ -1330,7 +1330,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                     $valueArray = array();
                     foreach ($field['choices'] as $key => $choice)
                     {
-                         $id = (string)$field['inputs'][$key]['id'];
+                        $id = (string)$field['inputs'][$key]['id'];
                         echo $id;
                         if (isset($entry[$id]) && $entry[$id] != null):
                             $valueArray[] = $choice["text"];
@@ -1358,23 +1358,23 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             }
             echo $value;
 
-            if ((isempty($contact_facebook) && ((strpos(strtolower($var_tag), "facebook") !== false) || ( && strpos(strtolower($label), "facebook") !=false)))
+            if ((empty($contact_facebook) && ((strpos(strtolower($var_tag), "facebook") !== false) || ( && strpos(strtolower($label), "facebook") !=false)))
             {
                 $contact_facebook = $value;
             }
 
-             if ((isempty($contact_name) && ((strpos(strtolower($var_tag), "name") !== false) || ( && strpos(strtolower($label), "name") !=false)))
-           {
+            if ((empty($contact_name) && ((strpos(strtolower($var_tag), "name") !== false) || ( && strpos(strtolower($label), "name") !=false)))
+            {
                 $contact_name = $value;
             }
 
-              if ((isempty($contact_email) && ((strpos(strtolower($var_tag), "mail") !== false) || ( && strpos(strtolower($label), "mail") !=false)))
-          {
+            if ((empty($contact_email) && ((strpos(strtolower($var_tag), "mail") !== false) || ( && strpos(strtolower($label), "mail") !=false)))
+            {
                 $contact_email = $value;
             }
 
-             if ((isempty($contact_target_tag) && ((strpos(strtolower($var_tag), "contact") !== false) || ( && strpos(strtolower($label), "mail") !=false)))
-           {
+            if ((empty($contact_target_tag) && ((strpos(strtolower($var_tag), "contact") !== false) || ( && strpos(strtolower($label), "mail") !=false)))
+            {
                 $contact_target_tag = $value;
             }
 
