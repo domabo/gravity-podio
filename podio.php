@@ -1273,6 +1273,7 @@ public static function get_mapped_field_list($variable_name, $selected_field, $f
 
 public static function export_toPodio($entry, $form, $is_fulfilled = false){
 
+print_r($entry);
 //Login to Podio
     $api = self::get_api();
     if(!$api)
