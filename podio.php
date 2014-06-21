@@ -1398,6 +1398,16 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             }
         }
 
+
+        $existingContacts = PodioContact::get_for_space( $space_id, $attributes = array(
+            "contact_type" => "space",
+            "exclude_self" => "true",
+            "type" => "mini",
+            "{mail}" => array($contact_email)
+            ) );
+
+        print_r($existingContacts);
+
         $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
 
         $merge_vars[$contact_target_tag] = $ep_profile_id;
