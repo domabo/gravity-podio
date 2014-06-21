@@ -1320,7 +1320,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             {
                     $id = (string)$field['inputs'][$key]['id'];
                     if (isset($entry[$id]) && $entry[$id] != null):
-                       echo $choice['value'];
+                       echo $choice['text'];
                     endif;
              }
        }
