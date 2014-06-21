@@ -834,6 +834,7 @@ jQuery(document).ready(function(){
         mysack.setVar( "podio_appid", appid);
         mysack.setVar( "podio_apptoken", apptoken);
         mysack.encVar( "cookie", document.cookie, false );
+        alert(podio_appid);
         mysack.onError = function() {jQuery("#podio_wait").hide(); alert('<?php _e("Ajax error while setting App Id and Token", "gravityformspodio") ?>' )};
         mysack.runAJAX();
 
