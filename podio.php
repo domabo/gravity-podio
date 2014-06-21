@@ -1200,12 +1200,13 @@ public static function get_fb_img($fbId){
         echo "$filename already exists, skipping\n\n";
     } else {
            $fp = fopen ($filename, 'w+');              // open file handle
+$useragent="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.13 (KHTML, wie z. B. Gecko) Chrome/13.0.782.215 Safari/525.13.";
 
     $ch = curl_init( "http://graph.facebook.com/". $fbid . "/picture");
     curl_setopt($ch, CURLOPT_FILE, $fp);          // output to file
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+   curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
     curl_setopt($ch, CURLOPT_TIMEOUT, 1000);      // some large value to allow curl to run for a long time
-    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
+    curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
      curl_exec($ch);
 
     curl_close($ch);                              // closing curl handle
