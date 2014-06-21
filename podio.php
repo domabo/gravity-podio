@@ -1013,7 +1013,7 @@ function IsConditionalLogicField(field){
 
 }
 
-public static function get_PodioAppMergeVars($config)
+public static function get_PodioAppMergeVars(&$config)
 {
 
    $appid=absint($config["meta"]["podio_appid"]);
