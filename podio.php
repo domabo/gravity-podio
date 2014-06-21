@@ -1310,6 +1310,7 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
 
 public static function export_feed_toPodio($entry, $form, $feed, $api)
 {
+    print_r($form);
     try
     {
 
