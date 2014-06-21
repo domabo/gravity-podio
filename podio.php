@@ -1023,13 +1023,15 @@ public static function get_PodioAppMergeVars(&$config)
         $config["meta"]["podio_spaceid"] = $podioApp->space_id;
 
         foreach ($podioApp->fields as $field) {
-            $mergefield=array();
-            $mergefield["tag"]=$field->external_id;
-         //   $mergefield["externalid"]=$field->external_id;
-            $mergefield["name"]=$field->config["label"];
-            $mergefield["req"]=$field->config["required"];
-            $mergefield["type"]=$field->type;
-            $merge_vars[]=$mergefield;
+                if ($field->active){
+                $mergefield=array();
+                $mergefield["tag"]=$field->external_id;
+             //   $mergefield["externalid"]=$field->external_id;
+                $mergefield["name"]=$field->config["label"];
+                $mergefield["req"]=$field->config["required"];
+                $mergefield["type"]=$field->type;
+                $merge_vars[]=$mergefield;
+            }
         }
     }
     catch (PodioError $e) {
