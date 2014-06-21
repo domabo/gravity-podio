@@ -1416,6 +1416,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 {
                     $contact_email = $value;
                     $contact_target_tag = $var_tag;
+                             $merge_vars[$var_tag] = $contact_name;
                 }
                 else if ($field_id == intval($field_id) && $input_type == "phone" && $field["phoneFormat"] == "standard") 
                 {
@@ -1425,7 +1426,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                     }
                     $merge_vars[$var_tag] = $phone;
                 } else if (!empty($field_id))
-                $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", $value, $form["id"], $field_id, $entry);
+                    $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", $value, $form["id"], $field_id, $entry);
                 break;
             }
         }
