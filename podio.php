@@ -121,7 +121,7 @@ class GFPodio {
         }
         else{
 //handling post submission.
-            add_action("gform_after_submission", array('GFPodio', 'export'), 10, 2);
+            add_action("gform_after_submission", array('GFPodio', 'export_toPodio'), 10, 2);
 
         }
     }
@@ -881,23 +881,6 @@ else{
 }
 }
 
-function SetGroupCondition(groupingName, groupname, selectedField, selectedValue){
-
-//load form fields
-jQuery("#podio_group_"+groupingName+"_"+groupname+"_field_id").html(GetSelectableFields(selectedField, 20));
-var groupConditionField = jQuery("#podio_group_"+groupingName+"_"+groupname+"_field_id").val();
-
-if(groupConditionField){
-    jQuery("#podio_group_"+groupingName+"_"+groupname+"_condition_message").hide();
-    jQuery("#podio_group_"+groupingName+"_"+groupname+"_condition_fields").show();
-    jQuery("#podio_group_"+groupingName+"_"+groupname+"_container").html(GetFieldValues(groupConditionField, selectedValue, 20, "podio_group_" + groupingName + "_" + groupname + "_value"));
-}
-else{
-    jQuery("#podio_group_"+groupingName+"_"+groupname+"_condition_message").show();
-    jQuery("#podio_group_"+groupingName+"_"+groupname+"_condition_fields").hide();
-}
-}
-
 function EndGetApp(appname, spaceid){
 
 if(appname!=""){
@@ -1257,78 +1240,7 @@ public static function get_mapped_field_list($variable_name, $selected_field, $f
     return $str;
 }
 
-public static function add_paypal_settings($config, $form) {
-
-    $settings_style = self::has_podio(rgar($form, "id")) ? "" : "display:none;";
-
-    $podio_feeds = array();
-    foreach(GFPodioData::get_feeds() as $feed) {
-        $podio_feeds[] = $feed['form_id'];
-    }
-    ?>
-    <li style="<?php echo $settings_style?>" id="gf_delay_podio_subscription_container">
-        <input type="checkbox" name="gf_paypal_delay_podio_subscription" id="gf_paypal_delay_podio_subscription" value="1" <?php echo rgar($config['meta'], 'delay_podio_subscription') ? "checked='checked'" : ""?> />
-        <label class="inline" for="gf_paypal_delay_podio_subscription">
-            <?php
-            _e("Subscribe user to Podio only when payment is received.", "gravityformspodio");
-            ?>
-        </label>
-    </li>
-
-    <script type="text/javascript">
-        jQuery(document).ready(function($){
-            jQuery(document).bind('paypalFormSelected', function(event, form) {
-
-                var podio_form_ids = <?php echo json_encode($podio_feeds); ?>;
-                var has_registration = false;
-
-                if(jQuery.inArray(String(form['id']), podio_form_ids) != -1)
-                    has_registration = true;
-
-                if(has_registration == true) {
-                    jQuery("#gf_delay_podio_subscription_container").show();
-                } else {
-                    jQuery("#gf_delay_podio_subscription_container").hide();
-                }
-            });
-        });
-    </script>
-
-    <?php
-}
-
-public static function save_paypal_settings($config) {
-    $config["meta"]["delay_podio_subscription"] = rgpost("gf_paypal_delay_podio_subscription");
-    return $config;
-}
-
-public static function paypal_fulfillment($entry, $config, $transaction_id, $amount) {
-    self::log_debug("Checking PayPal Fulfillment for transaction {$transaction_id}");
-//has this entry been already subscribed?
-    $is_subscribed = gform_get_meta($entry["id"], "podio_is_subscribed");
-
-    if(!$is_subscribed){
-        self::log_debug("Entry " . $entry["id"] . " has not been subscribed");
-        $form = RGFormsModel::get_form_meta($entry['form_id']);
-        self::export($entry, $form, true);
-    }
-    else
-    {
-        self::log_debug("Entry " . $entry["id"] . " is already subscribed");
-    }
-}
-
-public static function export($entry, $form, $is_fulfilled = false){
-
-    $paypal_config = self::get_paypal_config($form["id"], $entry);
-
-    $has_payment = self::get_payment_amount($form, $entry, $paypal_config) > 0;
-
-//if configured to only subscribe users when payment is received, delay subscription until the payment is received.
-    if($paypal_config && rgar($paypal_config["meta"], "delay_podio_subscription") && $has_payment && !$is_fulfilled){
-        self::log_debug("Subscription delayed pending PayPal payment received for entry " . $entry["id"]);
-        return;
-    }
+public static function export_toPodio($entry, $form, $is_fulfilled = false){
 
 //Login to Podio
     $api = self::get_api();
@@ -1345,64 +1257,14 @@ public static function export($entry, $form, $is_fulfilled = false){
         if(self::is_optin($form, $feed, $entry))
         {
             self::export_feed($entry, $form, $feed, $api);
-//updating meta to indicate this entry has already been subscribed to Podio. This will be used to prevent duplicate subscriptions.
+//updating meta to indicate this entry has already been exported to Podio. This will be used to prevent duplicate exports.
             self::log_debug("Marking entry " . $entry["id"] . " as subscribed");
-            gform_update_meta($entry["id"], "podio_is_subscribed", true);
+            gform_update_meta($entry["id"], "podio_is_exported", true);
         }
         else
         {
             self::log_debug("Opt-in condition not met; not subscribing entry " . $entry["id"] . " to list");
         }
-    }
-}
-
-public static function get_payment_amount($form, $entry, $paypal_config){
-
-    $products = GFCommon::get_product_fields($form, $entry, true);
-    $recurring_field = rgar($paypal_config["meta"], "recurring_amount_field");
-    $total = 0;
-    foreach($products["products"] as $id => $product){
-
-        if($paypal_config["meta"]["type"] != "subscription" || $recurring_field == $id || $recurring_field == "all"){
-            $price = GFCommon::to_number($product["price"]);
-            if(is_array(rgar($product,"options"))){
-                foreach($product["options"] as $option){
-                    $price += GFCommon::to_number($option["price"]);
-                }
-            }
-
-            $total += $price * $product['quantity'];
-        }
-    }
-
-    if($recurring_field == "all" && !empty($products["shipping"]["price"]))
-        $total += floatval($products["shipping"]["price"]);
-    return $total;
-
-}
-
-public static function has_podio($form_id){
-    if(!class_exists("GFPodioData"))
-        require_once(self::get_base_path() . "/data.php");
-
-//Getting Podio settings associated with this form
-    $config = GFPodioData::get_feed_by_form($form_id);
-
-    if(!$config)
-        return false;
-
-    return true;
-}
-
-private static function get_paypal_config($form_id, $entry){
-    if(!class_exists('GFPayPal'))
-        return false;
-
-    if(method_exists("GFPayPal", "get_config_by_entry")){
-        return GFPayPal::get_config_by_entry($entry);
-    }
-    else{
-        return GFPayPal::get_config($form_id);
     }
 }
 
@@ -1448,31 +1310,6 @@ break;
 }
 }
 
-
-$groupings = $feed["meta"]["groups"];
-if(is_array($groupings)){
-
-    $keys = array_keys($groupings);
-
-    $i=0;
-    foreach ( $feed["meta"]["groups"] as $grouping_name => $groups) {
-        $group_list = "";
-        $grouping_label = "";
-        foreach($groups as $group_name => $group){
-//replace commas in the group name because commas to podio indicate multiple groups
-            $group_label = str_replace(",","\,",$group["group_label"]);
-            $grouping_label = $group["grouping_label"];
-
-            if(self::assign_group_allowed($form, $feed, $grouping_name, $group_name,$entry))
-                $group_list .= $group_label . ",";
-        }
-
-        $merge_vars["GROUPINGS"][$i]["name"] = $grouping_label;
-        $merge_vars["GROUPINGS"][$i]["groups"] = empty($group_list) ? "" : substr($group_list, 0, -1);
-
-        $i++;
-    }
-}
 self::log_debug("Checking to see if {$email} is already on the list");
 $member_info = $api->listMemberInfo($feed["meta"]["contact_list_id"], $email);
 
@@ -1493,16 +1330,7 @@ else{
 //updating member
     self::log_debug("{$email} is already on the list; updating info");
 
-//retrieve existing groups for subscribers; add existing groups to selected groups from form so that existing groups are maintained for that subscriber
-    $current_groups = $member_info["data"][0]["merges"]["GROUPINGS"];
-
-    $keep_existing_groups = apply_filters("gform_podio_keep_existing_groups_{$form["id"]}", apply_filters("gform_podio_keep_existing_groups", true, $form, $entry, $feed), $form, $entry, $feed);
-    if(is_array($current_groups) && $keep_existing_groups){
-        self::log_debug("Appending existing groups.");
-        $merge_vars = self::append_groups($merge_vars, $current_groups);
-    }
-
-    self::log_debug("Calling - listUpdateMember, Parameters - List ID: " . $feed["meta"]["contact_list_id"] . ", Email: {$email}, " . " Merge_Vars: " . print_r($merge_vars,true) . ", Email Type: html, Replace Interests: true");
+  self::log_debug("Calling - listUpdateMember, Parameters - List ID: " . $feed["meta"]["contact_list_id"] . ", Email: {$email}, " . " Merge_Vars: " . print_r($merge_vars,true) . ", Email Type: html, Replace Interests: true");
     $retval = $api->listUpdateMember($feed["meta"]["contact_list_id"], $email, $merge_vars, "html", true);
 }
 
@@ -1517,31 +1345,6 @@ else
 }
 }
 
-public static function append_groups($merge_vars, $current_groups){
-
-    if(!isset($merge_vars["GROUPINGS"]))
-        return $merge_vars;
-
-    foreach($merge_vars["GROUPINGS"] as &$main_group){
-        $existing_subgroups = self::get_existing_subgroups( $main_group["name"], $current_groups);
-
-        if( !empty($main_group["groups"]) && !empty($existing_subgroups) )
-            $main_group["groups"] .= ",";
-
-        $main_group["groups"] .= $existing_subgroups;
-    }
-
-    return $merge_vars;
-}
-
-public static function get_existing_subgroups($name, $groups){
-    foreach($groups as $group){
-        if(strtolower($group["name"]) == strtolower($name)){
-            return $group["groups"];
-        }
-    }
-    return array();
-}
 
 public static function uninstall(){
 
@@ -1562,28 +1365,6 @@ public static function uninstall(){
     $plugin = "gravityformspodio/podio.php";
     deactivate_plugins($plugin);
     update_option('recently_activated', array($plugin => time()) + (array)get_option('recently_activated'));
-}
-
-public static function assign_group_allowed($form, $settings, $grouping, $group, $entry){
-    $config = $settings["meta"];
-    $operator = $config["groups"][$grouping][$group]["operator"];
-    $decision = $config["groups"][$grouping][$group]["decision"];
-
-
-    $field = RGFormsModel::get_field($form, $config["groups"][$grouping][$group]["field_id"]);
-    $field_value = RGFormsModel::get_lead_field_value($entry,$field);
-    $is_value_match = RGFormsModel::is_value_match($field_value, $config["groups"][$grouping][$group]["value"], $operator, $field);
-
-    if(!$config["groups"][$grouping][$group]["enabled"]){
-        return false;
-    }
-    else if($decision == "always" || empty($field)){
-        return true;
-    }
-    else{
-        return $is_value_match;
-    }
-
 }
 
 public static function is_optin($form, $settings, $entry){
