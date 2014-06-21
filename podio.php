@@ -1064,6 +1064,10 @@ public static function select_podio_form(){
 
     check_ajax_referer("gf_select_podio_form", "gf_select_podio_form");
     $form_id =  intval(rgpost("form_id"));
+    $appid = absint(rgpost("podio_appid"));     
+    $apptoken= rgpost("podio_apptoken");
+    $spaceid= rgpost("podio_spaceid");
+
     $setting_id =  intval(rgpost("setting_id"));
 
     $api = self::get_api();
@@ -1072,6 +1076,10 @@ public static function select_podio_form(){
 
    //getting configuration
     $config = GFPodioData::get_feed($setting_id);
+    $config["meta"]["podio_appid"] = absint(rgpost("podio_appid"));     
+    $config["meta"]["podio_apptoken"] = rgpost("podio_apptoken");
+    $spaceid= rgpost("podio_spaceid");
+
      $merge_vars = self::get_PodioAppMergeVars($config);
 
 //getting field map UI
