@@ -696,9 +696,9 @@ public static function settings_page(){
                 <div class="margin_vertical_10">
                     <table>
                         <tr><td><label for="podio_appid" class="left_header"><?php _e("Podio App Id", "gravityformspodio"); ?> <?php gform_tooltip("podio_appid") ?></label></td>
-                            <td><input type="text" id="podio_appid" name="podio_appid" onchange="SelectAppSpace(jQuery('#podio_appid').val(),jQuery(this).val());" value="<?php echo $appid; ?>"/> <span id="gf-appname"><?php echo $appname; ?></span></td></tr>
+                            <td><input type="text" id="podio_appid" name="podio_appid" onchange="SelectAppSpace(jQuery(jQuery(this).val(),'#podio_apptoken').val());" value="<?php echo $appid; ?>"/> <span id="gf-appname"><?php echo $appname; ?></span></td></tr>
                             <tr><td><label for="podio_apptoken" class="left_header"><?php _e("Podio App Token", "gravityformspodio"); ?> <?php gform_tooltip("podio_apptoken") ?></label></td>
-                                <td><input size="80" type="text" id="podio_apptoken" name="podio_apptoken" value="<?php echo $apptoken; ?>" onchange="SelectAppSpace(jQuery(this).val());"/></td></tr>
+                                <td><input size="80" type="text" id="podio_apptoken" name="podio_apptoken" value="<?php echo $apptoken; ?>" onchange="SelectAppSpace(jQuery(jQuery('#podio_appid').val(), this).val());"/></td></tr>
                                 <tr><td><label for="podio_spaceid" class="left_header"><?php _e("Podio Workspace Id", "gravityformspodio"); ?> <span id="gf-spaceid"><?php gform_tooltip("podio_spaceid") ?></span></label></td>
                                     <td><?php echo $spaceid; ?></td></tr>
                                 </table>
@@ -816,13 +816,13 @@ jQuery(document).ready(function(){
 <script type="text/javascript">
 
     function SelectAppSpace(appid, apptoken){
-        if(appid){
+        if((appid !="") && (apptoken != "")){
             jQuery("#podio_form_container").slideDown();
             jQuery("#gf_podio_form").val("");
         }
         else{
             jQuery("#podio_form_container").slideUp();
-            EndSelectForm("");
+            EndGetApp("");
         }
 
         var mysack = new sack(ajaxurl);
@@ -902,7 +902,7 @@ else{
 
 function EndGetApp(appname, spaceid){
 
-if(app_meta){
+if(appname){
     jQuery("#gf_appname").html(appname);
     jQuery("#gf_spaceid").html(spaceid);
 }
