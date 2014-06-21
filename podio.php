@@ -1317,7 +1317,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
 
        if(in_array($input_type, array("checkbox", "radio", "select", "multiselect"))){
-        print_r($field['choices']);
+        print_r($field);
             foreach ($field['choices'] as $key => $choice)
             {
                     $id = (string)$field['inputs'][$key]['id'];
