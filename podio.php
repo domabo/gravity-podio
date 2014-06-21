@@ -1496,11 +1496,11 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 "text": $title,
                 "description": $e->body['error'] . " " . $e->body['error_description']
                 , $options = array("silent" => true) );
-            return false
+            return false;
         }  
         catch (PodioError $e2) 
         {
-            return false
+            return false;
         }
     }
 }
