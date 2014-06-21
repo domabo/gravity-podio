@@ -1512,6 +1512,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 'due_on' => '2014-07-01 16:48:32')
                 , $options = array("silent" => false) );
             print_r($task);
+            echo "OK";
 
             return false;
         }  
