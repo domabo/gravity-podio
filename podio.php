@@ -1358,24 +1358,21 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     }
 
 
-    echo "CONTACT ". $contact_facebook . ";";
     if (!empty($contact_target_tag))
     {
          if (!empty($contact_facebook))
         {
             $filename = self::get_fb_img($contact_facebook);
-            echo "FACEBOOOK " . $filename[0];
            $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
-           
-        }
+          }
 
         
-        print_r( $fid);
+        print_r( $fid["file_id"]);
       
         $contact_fields = array(
         "name"=>$contact_name,
         "mail"=>array($contact_email),
-        "avatar"=>$fid
+        "avatar"=>$fid["file_id"];
         );
 
         $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
