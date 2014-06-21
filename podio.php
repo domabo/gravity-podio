@@ -1317,7 +1317,8 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
 
        if(in_array($input_type, array("checkbox", "radio", "select", "multiselect"))){
-        print_r($field);
+        print_r($field["choices"]);
+
             foreach ($field['choices'] as $key => $choice)
             {
                     $id = (string)$field['inputs'][$key]['id'];
@@ -1326,6 +1327,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                     endif;
              }
        }
+
 
        if ( strpos(strtolower($var_tag), "facebook") !== false)
       { $contact_facebook = rgar($entry, $field_id);
