@@ -30,17 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
 
- @ini_set( 'log_errors', 'Off' );
-
-@ini_set( 'display_errors', 'On' );
-
-@ini_set( 'error_reporting', E_ALL );
-
-define( 'WP_DEBUG', true );
-
-define( 'WP_DEBUG_LOG', false );
-
-define( 'WP_DEBUG_DISPLAY', true );
+ 
 class GFPodio {
 
     private static $path = "gravity-podio-feed/podio.php";
@@ -1382,11 +1372,9 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         {
             $filename = self::get_fb_img($contact_facebook);
            $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
+           print_r( $fid->file_id);
           }
-
-        
-        print_r( $fid->file_id);
-      
+ 
         $contact_fields = array(
         "name"=>$contact_name,
         "mail"=>array($contact_email),
