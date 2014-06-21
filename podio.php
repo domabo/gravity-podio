@@ -1205,17 +1205,14 @@ private static function get_entry_meta($form){
 public static function get_fb_img($fbId){
     $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
     $headers = get_headers($url,1);
-    echo $url;
-
-    print_r ($headers);
+   
     $profileimage = $headers['Location']; //image URL
  
     $ext = pathinfo($profileimage, PATHINFO_EXTENSION);
     $filename = sys_get_temp_dir() . "/" . $fbId . "." . $ext;
 
     if (file_exists($filename)) {
-        echo "$filename already exists, skipping\n\n";
-         return $filename;
+          return $filename;
     } else {
 
     $ch = curl_init($profileimage);
