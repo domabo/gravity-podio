@@ -1360,7 +1360,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                     $phone = sprintf("%s-%s-%s", $matches[1], $matches[2], $matches[3]);
                 }
                 $merge_vars[$var_tag] = $phone;
-            } else
+            } else if (!empty($field_id))
                 $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", rgar($entry, $field_id), $form["id"], $field_id, $entry);
             break;
         }
