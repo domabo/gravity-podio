@@ -1506,10 +1506,10 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 $title = $title . " for " . $contact_name;
                 $task = PodioTask::create( $attributes = array(
                 "text" => $title,
-                "org_id" => 679903,
                 "private" => false,
                 "description" => "TEST",
                 "ref" => $appid,
+                "statis" => "active",
                 "space_id" => $spaceid)
                );
             print_r($task);
