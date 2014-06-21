@@ -1315,7 +1315,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
        $field = RGFormsModel::get_field($form, $field_id);
     
         if (RGFormsModel::get_input_type($field)=="checkbox")
-        {print_r($field);
+        {print_r($field["choices"]);
 
              }
 
