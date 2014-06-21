@@ -606,11 +606,8 @@ public static function settings_page(){
              
                 $config["form_id"] = absint($_POST["gf_podio_form"]);
 
-
                  $is_valid = true;
-
-    
-                 //getting merge vars from selected app (if one was entered or submitted)
+             //getting merge vars from selected app (if one was entered or submitted)
                 if (rgempty("podio_appid", $config["meta"]))
                 {
                     $merge_vars = array();
@@ -620,7 +617,7 @@ public static function settings_page(){
                     $merge_vars = self::get_PodioAppMergeVars($config);
                 }
 
-                $appname= $config["meta"]["podio_spaceid"];
+                $appname= $config["meta"]["podio_appname"];
                 $spaceid= $config["meta"]["podio_spaceid"];
 
                $field_map = array();
