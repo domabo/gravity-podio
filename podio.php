@@ -815,7 +815,7 @@ jQuery(document).ready(function(){
 </div>
 <script type="text/javascript">
 
-    function SelectAppSpace(appid){
+    function SelectAppSpace(appid, apptoken){
         if(appid){
             jQuery("#podio_form_container").slideDown();
             jQuery("#gf_podio_form").val("");
