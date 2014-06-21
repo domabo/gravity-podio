@@ -1326,16 +1326,13 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $input_type = RGFormsModel::get_input_type($field);
 
 
-            if(is_array(rgar($field, "choices")) && $input_type != "list"){
+            if(is_array(rgar($field, "choices")) && $input_type != "list")
+            {
                 if ($input_type == "checkbox") {
                     $valueArray = array();
                     foreach ($field['choices'] as $key => $choice)
                     {
-                         echo "<br>";
-                       
-                        print_r($choice); 
-                        echo "<br>";
-                        $id = (string)$field['inputs'][$key]['id'];
+                         $id = (string)$field['inputs'][$key]['id'];
                         echo $id;
                         if (isset($entry[$id]) && $entry[$id] != null):
                             $valueArray[] = $choice["text"];
@@ -1361,6 +1358,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             {
                 $value = rgar($entry, $field_id);
             }
+            echo $value;
 
             if ( strpos(strtolower($var_tag), "facebook") !== false)
                 $contact_facebook = $value;
