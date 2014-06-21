@@ -1378,7 +1378,6 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             if ($filename)
             {
                 $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
-                print_r( $fid->file_id);
                 $contact_fields["avatar"] = ($fid->file_id);
             }
         }
