@@ -1023,7 +1023,7 @@ public static function get_PodioAppMergeVars(&$config)
         $config["meta"]["podio_spaceid"] = $podioApp->space_id;
 
         foreach ($podioApp->fields as $field) {
-                if ($field->active){
+                if ($field->status=="active"){
                 $mergefield=array();
                 $mergefield["tag"]=$field->external_id;
              //   $mergefield["externalid"]=$field->external_id;
