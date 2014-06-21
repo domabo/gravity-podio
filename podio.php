@@ -1309,7 +1309,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     $merge_vars = array();
     foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
      echo "<br>". strtolower($var_tag) . ":" . $field_id ." , ";
-     echo strpos(strtolower($var_tag), "facebook");
+     echo strpos(strtolower($var_tag), "acebook");
     {
         
        if ( strpos(strtolower($var_tag), "facebook") != false)
