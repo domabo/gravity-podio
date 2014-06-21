@@ -1509,7 +1509,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 "private" => false,
                 "description" => "TEST",
                 "status" => "active",
-                "space_id" => $spaceid), options = {} );
+                "space_id" => $spaceid), $options = array() );
                
             print_r($task);
             echo "OK";
