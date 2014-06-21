@@ -455,7 +455,7 @@ public static function settings_page(){
                                             </span>
                                         </div>
                                     </td>
-                                    <td class="column-date"><?php echo $setting["meta"]["podio_appid"]; ?></td>
+                                    <td class="column-date"><?php echo $setting["meta"]["podio_spaceid"]. "/" . $setting["meta"]["podio_appname"]; ?></td>
                                 </tr>
                                 <?php
                             }
