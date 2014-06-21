@@ -1505,7 +1505,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             if (!empty($contact_name))
                 $title = $title . " for " . $contact_name;
 
-           $task = PodioTask::create_with_ref( "app", $appid, $attributes = array( "text" => $title,
+           $task = PodioTask::create_for( "app", $appid, $attributes = array( "text" => $title,
                 "private" => false,
                 "description" => "TEST",
                 "status" => "active",
