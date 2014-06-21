@@ -1372,7 +1372,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
         if (!empty($contact_facebook))
         {
-
+echo "DOWNLOADING FROM FACEBOOK";
             $filename = self::get_fb_img($contact_facebook);
             echo $filename;
      //       $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg")
