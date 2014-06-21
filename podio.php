@@ -1313,6 +1313,18 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
       { $contact_facebook = rgar($entry, $field_id);
        }
 
+      if ( strpos(strtolower($var_tag), "name") !== false)
+      { $contact_name = rgar($entry, $field_id);
+       }
+
+      if ( strpos(strtolower($var_tag), "mail") !== false)
+      {     $contact_email = rgar($entry, $field_id);
+       }
+
+        if ( strpos(strtolower($var_tag), "contact") !== false)
+      {              $contact_target_tag = $var_tag;
+       }
+
        switch(strtolower($field_id))
         {
             case "date_created" :
