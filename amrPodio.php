@@ -106,7 +106,7 @@ $ip = getenv('HTTP_CLIENT_IP')?:
     getenv('HTTP_FORWARDED_FOR')?:
     getenv('HTTP_FORWARDED')?:
     getenv('REMOTE_ADDR');
-if ($ip == "71.228.247.175")
+if ($ip == "71.228.247.175AAAA")
 {
   print_r($item_fields);
 }
