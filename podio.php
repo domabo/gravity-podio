@@ -1315,9 +1315,8 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
                 foreach ($field['choices'] as $key => $choice)
                 {
                     $id = (string)$field['inputs'][$key]['id'];
-                    if (isset($entry[$id]) && $entry[$id] != null):
+                    if (isset($entry[$id]) && $entry[$id] != null)
                         $valueArray[] = $choice["text"];
-                    endif;
                 }
                 $value = implode(",", $valueArray);
             } else if ($input_type == "radio") {
@@ -1340,7 +1339,9 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $value = rgar($entry, $field_id);
         }
 
-        if (((empty($contact_facebook)) && ((strlen($label)<15)) && ((strpos(strtolower($var_tag), "facebook") !== false) ||  (strpos(strtolower($label), "facebook") !=false))
+        if (
+            ((empty($contact_facebook)) && (strlen($label)<15))
+             && ((strpos(strtolower($var_tag), "facebook") !== false) ||  (strpos(strtolower($label), "facebook") !=false))
         {
             $contact_facebook = $value;
         }
