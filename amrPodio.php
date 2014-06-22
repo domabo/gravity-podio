@@ -84,6 +84,7 @@ class amrPodio
           if ($filename)
           {
             $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
+            echo $fid->file_id;
             $contact_fields["avatar"] = ($fid->file_id);
           }
         }
