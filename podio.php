@@ -30,7 +30,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
 
- @ini_set( 'log_errors', 'Off' );
+@ini_set( 'log_errors', 'Off' );
 
 @ini_set( 'display_errors', 'On' );
 
@@ -41,6 +41,7 @@ define( 'WP_DEBUG', true );
 define( 'WP_DEBUG_LOG', false );
 
 define( 'WP_DEBUG_DISPLAY', true );
+
 class GFPodio {
 
     private static $path = "gravity-podio-feed/podio.php";
@@ -1006,9 +1007,9 @@ function IsConditionalLogicField(field){
 
 public static function get_PodioAppMergeVars(&$config)
 {
-     if(!class_exists("amrPodio")){
-            require_once("amrPodio.php");
-        }
+    if(!class_exists("amrPodio")){
+        require_once("amrPodio.php");
+    }
 
     $appid=absint($config["meta"]["podio_appid"]);
     $apptoken= $config["meta"]["podio_apptoken"];
@@ -1406,7 +1407,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
     }
 
-    $reterr= amrPodio::createContactItem($appid, $spaceid, $contact_name, $contact_email, $contact_facebook, &$merge_vars, $contact_target_tag);
+    $reterr= amrPodio::createContactItem($appid, $spaceid, $contact_name, $contact_email, $contact_facebook, $merge_vars, $contact_target_tag);
     if(empty($reterr))
         return true;
 
