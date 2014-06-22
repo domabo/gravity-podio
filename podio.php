@@ -1376,7 +1376,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             {
                 $contact_email = $value;
                 $contact_target_tag = $var_tag;
-                $merge_vars[$var_tag] = $contact_name;
+                $merge_vars[$var_tag] = $contact_email;
             }
             else if ($field_id == intval($field_id) && $input_type == "phone" && $field["phoneFormat"] == "standard") 
             {
