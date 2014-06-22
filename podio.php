@@ -30,18 +30,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
 
- @ini_set( 'log_errors', 'Off' );
-
-@ini_set( 'display_errors', 'On' );
-
-@ini_set( 'error_reporting', E_ALL );
-
-define( 'WP_DEBUG', true );
-
-define( 'WP_DEBUG_LOG', false );
-
-define( 'WP_DEBUG_DISPLAY', true );
-
 class GFPodio {
 
     private static $path = "gravity-podio-feed/podio.php";
@@ -1337,8 +1325,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         if ((empty($contact_name)) && ((strpos(strtolower($var_tag), "name") !== false) ||  strpos(strtolower($label), "name") !=false))
         {
             $contact_name = $value;
-            echo "CONTACT NAME FOUND";
-        }
+         }
 
         if ((empty($contact_email)) && ((strpos(strtolower($var_tag), "mail") !== false) ||  strpos(strtolower($label), "mail") !=false))
         {
@@ -1407,8 +1394,6 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         }
 
     }
-
-    print_r($merge_vars);
 
   amrPodio::authenticate($appid, $apptoken);
   $reterr= amrPodio::createContactItem($appid, $spaceid, $contact_name, $contact_email, $contact_facebook, $merge_vars, $contact_target_tag);
