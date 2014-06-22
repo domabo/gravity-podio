@@ -1410,6 +1410,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
     print_r($merge_vars);
 
+  amrPodio::authenticate($appid, $apptoken);
   $reterr= amrPodio::createContactItem($appid, $spaceid, $contact_name, $contact_email, $contact_facebook, $merge_vars, $contact_target_tag);
   return true;
     if(empty($reterr))
