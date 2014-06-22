@@ -1340,7 +1340,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
             $value = rgar($entry, $field_id);
         }
 
-        if ((empty($contact_facebook)) && ((strpos(strtolower($var_tag), "facebook") !== false) ||  strpos(strtolower($label), "facebook") !=false))
+        if (((empty($contact_facebook)) && ((strlen($label)<15)) && ((strpos(strtolower($var_tag), "facebook") !== false) ||  (strpos(strtolower($label), "facebook") !=false))
         {
             $contact_facebook = $value;
         }
