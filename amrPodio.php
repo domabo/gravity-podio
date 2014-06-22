@@ -162,4 +162,5 @@ class amrPodio
       return "There was an error. The API responded with the error type " . $te->body['error'] ." and the mesage " . $te->body['error_description'] . ".";
     }
   }
+}
 ?>
