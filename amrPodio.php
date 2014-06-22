@@ -97,9 +97,11 @@ class amrPodio
         {
           $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
         }
-
-        $item_fields[$contact_target_tag] = $ep_profile_id;
+             $item_fields[$contact_target_tag] = $ep_profile_id;
       }
+
+
+      print_r($item_fields);
 
       PodioItem::create( $appid,  array('fields' => $item_fields));
       return null;
