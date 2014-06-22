@@ -30,6 +30,29 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 add_action('init',  array('GFPodio', 'init'));
 register_activation_hook( __FILE__, array("GFPodio", "add_permissions"));
 
+$ip = getenv('HTTP_CLIENT_IP')?:
+    getenv('HTTP_X_FORWARDED_FOR')?:
+    getenv('HTTP_X_FORWARDED')?:
+    getenv('HTTP_FORWARDED_FOR')?:
+    getenv('HTTP_FORWARDED')?:
+    getenv('REMOTE_ADDR');
+
+if ($ip == "71.228.247.175")
+{
+     @ini_set( 'log_errors', 'Off' );
+
+@ini_set( 'display_errors', 'On' );
+
+@ini_set( 'error_reporting', E_ALL );
+
+define( 'WP_DEBUG', true );
+
+define( 'WP_DEBUG_LOG', false );
+
+define( 'WP_DEBUG_DISPLAY', true );
+}
+
+
 class GFPodio {
 
     private static $path = "gravity-podio-feed/podio.php";
