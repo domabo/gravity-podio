@@ -1396,9 +1396,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
     }
 
   amrPodio::authenticate($appid, $apptoken);
-  $reterr= amrPodio::createContactItem($appid, $spaceid, $contact_name, $contact_email, $contact_facebook, $merge_vars, $contact_target_tag);
-  return true;
-    if(empty($reterr))
+  $reterr= amrPodio::createContactItem($appid, $spaceid, $contact_name, $contact_email, $contact_facebook, $merge_vars, $contact_target_tag);    if(empty($reterr))
         return true;
 
     echo $reterr;
