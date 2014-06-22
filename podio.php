@@ -511,40 +511,32 @@ public static function settings_page(){
     }
 
     private static function is_valid_login($PODIO_CLIENTID, $PODIO_CLIENTSECRET){
-        if(!class_exists("Podio")){
-            require_once("api-podio/PodioAPI.php");
+        if(!class_exists("amrPodio")){
+            require_once("amrPodio.php");
         }
-
-        Podio::setup($PODIO_CLIENTID, $PODIO_CLIENTSECRET);
-
+        amrPodio::setup($PODIO_CLIENTID, $PODIO_CLIENTSECRET);
 
         return (!empty($PODIO_CLIENTID) && !empty($PODIO_CLIENTSECRET)) ? true : false;
     }
 
     private static function get_api(){
 
-//global podio settings
         $settings = get_option("gf_podio_settings");
         $api = null;
 
         if(!empty($settings["apiclientid"])){
-            if(!class_exists("Podio")){
-                require_once("api-podio/PodioAPI.php");
+            if(!class_exists("amrPodio")){
+                require_once("amrPodio.php");
             }
-            self::log_debug("Retrieving API Info for key " . $settings["apiclientid"]);
-            Podio::setup($settings["apiclientid"], $settings["apiclientsecret"]);
+            amrPodio::setup($settings["apiclientid"], $settings["apiclientsecret"]);
             $api=array("clientid"=>$settings["apiclientid"], "clientsecret"=>$settings["apiclientsecret"]);
         } else {
-            self::log_debug("API credentials not set");
             return null;
         }
 
         if(!$api){
-            self::log_error("Failed to set up the API");
             return null;
         } 
-
-        self::log_debug("Successful API response received");
 
         return $api;
     }
@@ -1003,21 +995,17 @@ function IsConditionalLogicField(field){
 
 public static function get_PodioAppMergeVars(&$config)
 {
+     if(!class_exists("amrPodio")){
+            require_once("amrPodio.php");
+        }
 
     $appid=absint($config["meta"]["podio_appid"]);
     $apptoken= $config["meta"]["podio_apptoken"];
 
     $merge_vars = array();
-    try {
-        if (!Podio::is_authenticated())
-        {
-            Podio::authenticate('app', array(
-                'app_id' => $appid,
-                'app_token' => $apptoken
-                ));
-        }
-
-        $podioApp=PodioApp::get( $appid, $attributes = array() );
+    $podioApp=amrPodio::getApp( $appid, $apptoken);
+    if(!empty($podioApp))
+    {
         $config["meta"]["podio_appname"] = $podioApp->config["name"];
         $config["meta"]["podio_spaceid"] = $podioApp->space_id;
 
@@ -1032,10 +1020,10 @@ public static function get_PodioAppMergeVars(&$config)
                 $merge_vars[]=$mergefield;
             }
         }
-    }
-    catch (PodioError $e) {
+    } else
+    {
         $config["meta"]["podio_appname"]="Error with App Id/Token";
-        $config["meta"]["podio_spaceid"]="" . $e->body['error_description'];
+        $config["meta"]["podio_spaceid"]="";
     }
 
     return $merge_vars;
@@ -1204,34 +1192,6 @@ private static function get_entry_meta($form){
     return $form;
 }
 
-public static function get_fb_img($fbId){
-    $url = 'http://graph.facebook.com/' . $fbId . '/picture?type=large';
-    $headers = get_headers($url,1);
-
-$profileimage = $headers['Location']; //image URL
-
-$ext = pathinfo($profileimage, PATHINFO_EXTENSION);
-$filename = sys_get_temp_dir() . "/" . $fbId . "." . $ext;
-
-if (file_exists($filename)) 
-{
-    return $filename;
-} else {
-
-    $ch = curl_init($profileimage);
-    $fp = fopen( $filename, "wb");
-    curl_setopt($ch, CURLOPT_FILE, $fp);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_USERAGENT,"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/525.13 (KHTML, wie z. B. Gecko) Chrome/13.0.782.215 Safari/525.13." );
-    curl_exec($ch);
-    curl_close($ch);
-    fclose($fp);
-    return $filename;
-}
-}
-
-
-
 private static function get_address($entry, $field_id){
     $street_value = str_replace("  ", " ", trim($entry[$field_id . ".1"]));
     $street2_value = str_replace("  ", " ", trim($entry[$field_id . ".2"]));
@@ -1286,6 +1246,7 @@ public static function get_mapped_field_list($variable_name, $selected_field, $f
 
 public static function export_toPodio($entry, $form, $is_fulfilled = false){
 
+
 //Login to Podio
     $api = self::get_api();
     if(!$api)
@@ -1312,210 +1273,137 @@ public static function export_toPodio($entry, $form, $is_fulfilled = false){
 
 public static function export_feed_toPodio($entry, $form, $feed, $api)
 {
-    try
+
+    $appid=absint($feed["meta"]["podio_appid"]);
+    $apptoken= $feed["meta"]["podio_apptoken"];
+    $spaceid= $feed["meta"]["podio_spaceid"];
+
+    $merge_vars = array();
+    foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
     {
-        $appid=absint($feed["meta"]["podio_appid"]);
-        $apptoken= $feed["meta"]["podio_apptoken"];
-        $spaceid= $feed["meta"]["podio_spaceid"];
+        $field = RGFormsModel::get_field($form, $field_id);
+        $input_type = RGFormsModel::get_input_type($field);
+        $label = $field["label"];
 
-        $merge_vars = array();
-        foreach($feed["meta"]["field_map"] as $var_tag => $field_id)
+        if(is_array(rgar($field, "choices")) && $input_type != "list")
         {
-            $field = RGFormsModel::get_field($form, $field_id);
-            $input_type = RGFormsModel::get_input_type($field);
-            $label = $field["label"];
-
-            if(is_array(rgar($field, "choices")) && $input_type != "list")
-            {
-                if ($input_type == "checkbox") {
-                    $valueArray = array();
-                    foreach ($field['choices'] as $key => $choice)
-                    {
-                        $id = (string)$field['inputs'][$key]['id'];
-                        if (isset($entry[$id]) && $entry[$id] != null):
-                            $valueArray[] = $choice["text"];
-                        endif;
-                    }
-                    $value = implode(",", $valueArray);
-                } else if ($input_type == "radio") {
-                    $value = rgar($entry, $field_id);
-                    foreach ($field['choices'] as $choice)
-                    {
-                        if ($choice["value"] == $value)
-                        {
-
-                            $value = $choice["text"];
-                            break;
-                        }
-                    }
-                } else
+            if ($input_type == "checkbox") {
+                $valueArray = array();
+                foreach ($field['choices'] as $key => $choice)
                 {
-                    $value = rgar($entry, $field_id);
+                    $id = (string)$field['inputs'][$key]['id'];
+                    if (isset($entry[$id]) && $entry[$id] != null):
+                        $valueArray[] = $choice["text"];
+                    endif;
+                }
+                $value = implode(",", $valueArray);
+            } else if ($input_type == "radio") {
+                $value = rgar($entry, $field_id);
+                foreach ($field['choices'] as $choice)
+                {
+                    if ($choice["value"] == $value)
+                    {
+
+                        $value = $choice["text"];
+                        break;
+                    }
                 }
             } else
             {
                 $value = rgar($entry, $field_id);
             }
+        } else
+        {
+            $value = rgar($entry, $field_id);
+        }
 
-            if ((empty($contact_facebook)) && ((strpos(strtolower($var_tag), "facebook") !== false) ||  strpos(strtolower($label), "facebook") !=false))
+        if ((empty($contact_facebook)) && ((strpos(strtolower($var_tag), "facebook") !== false) ||  strpos(strtolower($label), "facebook") !=false))
+        {
+            $contact_facebook = $value;
+        }
+
+        if ((empty($contact_name)) && ((strpos(strtolower($var_tag), "name") !== false) ||  strpos(strtolower($label), "name") !=false))
+        {
+            $contact_name = $value;
+        }
+
+        if ((empty($contact_email)) && ((strpos(strtolower($var_tag), "mail") !== false) ||  strpos(strtolower($label), "mail") !=false))
+        {
+            $contact_email = $value;
+        }
+
+        if ((empty($contact_target_tag)) && ((strpos(strtolower($var_tag), "contact") !== false) ||  strpos(strtolower($label), "mail") !=false))
+        {
+            $contact_target_tag = $var_tag;
+        }
+
+        switch(strtolower($field_id))
+        {
+            case "date_created" :
+            $merge_vars[$var_tag] = rgar($entry, "date_created");
+            break;
+            case "form_title" :
+            $merge_vars[$var_tag] = rgar($form, "title");
+            break;
+            case "ip" :
+            $merge_vars[$var_tag] = rgar($entry, "ip");
+            break;
+            case "source_url" :
+            $merge_vars[$var_tag] = rgar($entry, "source_url");
+            break;
+            default :
+            if($field_id == intval($field_id) && $input_type == "address") 
+                $merge_vars[$var_tag] = self::get_address($entry, $field_id);
+            else if($field_id == intval($field_id) && $input_type == "name") 
             {
-                $contact_facebook = $value;
+                $contact_name = self::get_name($entry, $field_id);
+                $merge_vars[$var_tag] = $contact_name;
             }
-
-            if ((empty($contact_name)) && ((strpos(strtolower($var_tag), "name") !== false) ||  strpos(strtolower($label), "name") !=false))
-            {
-                $contact_name = $value;
-            }
-
-            if ((empty($contact_email)) && ((strpos(strtolower($var_tag), "mail") !== false) ||  strpos(strtolower($label), "mail") !=false))
+            else if($field_id == intval($field_id) && $input_type == "email") 
             {
                 $contact_email = $value;
-            }
-
-            if ((empty($contact_target_tag)) && ((strpos(strtolower($var_tag), "contact") !== false) ||  strpos(strtolower($label), "mail") !=false))
-            {
                 $contact_target_tag = $var_tag;
+                $merge_vars[$var_tag] = $contact_name;
             }
-
-            switch(strtolower($field_id))
+            else if ($field_id == intval($field_id) && $input_type == "phone" && $field["phoneFormat"] == "standard") 
             {
-                case "date_created" :
-                $merge_vars[$var_tag] = rgar($entry, "date_created");
-                break;
-                case "form_title" :
-                $merge_vars[$var_tag] = rgar($form, "title");
-                break;
-                case "ip" :
-                $merge_vars[$var_tag] = rgar($entry, "ip");
-                break;
-                case "source_url" :
-                $merge_vars[$var_tag] = rgar($entry, "source_url");
-                break;
-                default :
-                if($field_id == intval($field_id) && $input_type == "address") 
-                    $merge_vars[$var_tag] = self::get_address($entry, $field_id);
-                else if($field_id == intval($field_id) && $input_type == "name") 
-                {
-                    $contact_name = self::get_name($entry, $field_id);
-                    $merge_vars[$var_tag] = $contact_name;
+                $phone = rgar($entry, $field_id);
+                if (preg_match('/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/', $phone, $matches)){
+                    $phone = sprintf("%s-%s-%s", $matches[1], $matches[2], $matches[3]);
                 }
-                else if($field_id == intval($field_id) && $input_type == "email") 
-                {
-                    $contact_email = $value;
-                    $contact_target_tag = $var_tag;
-                             $merge_vars[$var_tag] = $contact_name;
-                }
-                else if ($field_id == intval($field_id) && $input_type == "phone" && $field["phoneFormat"] == "standard") 
-                {
-                    $phone = rgar($entry, $field_id);
-                    if (preg_match('/^\D?(\d{3})\D?\D?(\d{3})\D?(\d{4})$/', $phone, $matches)){
-                        $phone = sprintf("%s-%s-%s", $matches[1], $matches[2], $matches[3]);
-                    }
-                    $merge_vars[$var_tag] = $phone;
-                } else if (!empty($field_id) && !empty($value))
-                    $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", $value, $form["id"], $field_id, $entry);
-                break;
-            }
+                $merge_vars[$var_tag] = $phone;
+            } else if (!empty($field_id) && !empty($value))
+            $merge_vars[$var_tag] = apply_filters("gform_podio_field_value", $value, $form["id"], $field_id, $entry);
+            break;
         }
+    }
 
-        if (!empty($contact_target_tag) && empty($contact_name))
-        {
-              foreach($form["fields"] as $field)
-              {
-                    $input_type = RGFormsModel::get_input_type($field);
-                    $label = $field["label"];
-                    $field_id = $field["id"];
-
-                if (($field_id == intval($field_id) && $input_type == "name")  || strpos(strtolower($label), "name") !== false)
-                {
-                    $contact_name = self::get_name($entry, $field_id);
-                    break;
-                }
-          }
-
-        }
-
-
-        if (!Podio::is_authenticated())
-        {
-            Podio::authenticate('app', array(
-                'app_id' => $appid,
-                'app_token' => $apptoken
-                ));
-        }
-
-        if (!empty($contact_target_tag))
-        {
-            $contact_fields = array(
-                "name"=>$contact_name,
-                "mail"=>array($contact_email)
-                );
-
-
-            if (!empty($contact_facebook))
-            {
-                $filename = self::get_fb_img($contact_facebook);
-                if ($filename)
-                {
-                    $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
-                    $contact_fields["avatar"] = ($fid->file_id);
-                }
-            }
-
-            $existingContacts = PodioContact::get_for_app( $appid , $attributes = array(
-                "mail" => array($contact_email),
-                "name" => $contact_name
-                ) );
-
-            if (count($existingContacts)>0)
-            {
-                $first =  $existingContacts[0];
-                $ep_profile_id = $first->profile_id;
-
-                PodioContact::update( $ep_profile_id, $contact_fields );
-
-            } else
-            {
-                $ep_profile_id = PodioContact::create( $spaceid, $contact_fields);
-            }
-
-            $merge_vars[$contact_target_tag] = $ep_profile_id;
-        }
-        $retval = PodioItem::create( $appid,  array('fields' => $merge_vars));
-        return true;
-    } catch (PodioError $e) 
+    if (!empty($contact_target_tag) && empty($contact_name))
     {
-        echo "There was an error. The API responded with the error type " . $e->body['error'] ." and the mesage " . $e->body['error_description'] . ".";
-        echo "<script>alert('Unfortunately an error has occured in the submission.  Please see the window for more details');</script>";
-        try  
+        foreach($form["fields"] as $field)
         {
-            $title = "Error in Survey Submission";
-            if (!empty($contact_name))
-                $title = $title . " for " . $contact_name;
+            $input_type = RGFormsModel::get_input_type($field);
+            $label = $field["label"];
+            $field_id = $field["id"];
 
-           $task = PodioTask::create_for( "app", $appid, $attributes = array( "text" => $title,
-                "private" => false,
-                "description" => "TEST",
-                "status" => "active",
-                "space_id" => $spaceid), $options = array() );
-               
-       
-            echo "OK";
-
-            return false;
-        }  
-        catch (PodioError $e2) 
-        {
-             echo "There was an error. The API responded with the error type " . $e2->body['error'] ." and the mesage " . $e2->body['error_description'] . ".";
-       
-            return false;
+            if (($field_id == intval($field_id) && $input_type == "name")  || strpos(strtolower($label), "name") !== false)
+            {
+                $contact_name = self::get_name($entry, $field_id);
+                break;
+            }
         }
 
     }
+
+    $reterr= amrPodio::createContactItem($appid, $spaceid, $contact_name, $contact_email, $contact_facebook, &$merge_vars, $contact_target_tag);
+    if(empty($reterr))
+        return true;
+
+    echo $reterr;
+    echo "<script>alert('Unfortunately an error has occured in the submission.  It has been recorded for someone to investigate.  Please see the window for more details');</script>";
+    return false;
+
 }
-
-
-
 
 public static function uninstall(){
 
