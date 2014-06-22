@@ -1337,6 +1337,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
         if ((empty($contact_name)) && ((strpos(strtolower($var_tag), "name") !== false) ||  strpos(strtolower($label), "name") !=false))
         {
             $contact_name = $value;
+            echo "CONTACT NAME FOUND";
         }
 
         if ((empty($contact_email)) && ((strpos(strtolower($var_tag), "mail") !== false) ||  strpos(strtolower($label), "mail") !=false))
@@ -1407,7 +1408,7 @@ public static function export_feed_toPodio($entry, $form, $feed, $api)
 
     }
 
-    print_r($mergevars);
+    print_r($merge_vars);
 
   $reterr= amrPodio::createContactItem($appid, $spaceid, $contact_name, $contact_email, $contact_facebook, $merge_vars, $contact_target_tag);
   return true;
