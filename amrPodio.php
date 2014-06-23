@@ -79,7 +79,6 @@ class amrPodio
           if ($filename)
           {
             $fid = PodioFile::upload ($filename, $contact_facebook . ".jpg");
-            echo $fid->file_id;
             $contact_fields["avatar"] = ($fid->file_id);
           }
         }
@@ -99,17 +98,6 @@ class amrPodio
         }
              $item_fields[$contact_target_tag] = $ep_profile_id;
       }
-
-$ip = getenv('HTTP_CLIENT_IP')?:
-    getenv('HTTP_X_FORWARDED_FOR')?:
-    getenv('HTTP_X_FORWARDED')?:
-    getenv('HTTP_FORWARDED_FOR')?:
-    getenv('HTTP_FORWARDED')?:
-    getenv('REMOTE_ADDR');
-if ($ip == "71.228.247.175AAAA")
-{
-  print_r($item_fields);
-}
      
       PodioItem::create( $appid,  array('fields' => $item_fields));
       return null;
